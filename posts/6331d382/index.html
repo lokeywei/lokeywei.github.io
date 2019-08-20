@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>数据库连接池 | 魏巍的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content>
+    <meta name="description" content="我们项目过程中常常需要用到数据库连接池，拿常用的druid来说我们需要设置初始连接池大小（initial-size）和最大连接活跃数（max-active）。那么数据库连接池大小到底应该设置成多少呢？ 不妨意淫一下，你手里有个网站，并发压力虽然还没到 Facebook 那个级别，但是呢？也有个1万上下的并发量！也就是说差不多2万左右的 TPS。那么问题来了！这个网站的数据库连接池应该设置成多大合适">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库连接池">
+<meta property="og:url" content="https://blog.wweiwei.me/posts/6331d382/index.html">
+<meta property="og:site_name" content="魏巍的博客">
+<meta property="og:description" content="我们项目过程中常常需要用到数据库连接池，拿常用的druid来说我们需要设置初始连接池大小（initial-size）和最大连接活跃数（max-active）。那么数据库连接池大小到底应该设置成多少呢？ 不妨意淫一下，你手里有个网站，并发压力虽然还没到 Facebook 那个级别，但是呢？也有个1万上下的并发量！也就是说差不多2万左右的 TPS。那么问题来了！这个网站的数据库连接池应该设置成多大合适">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-07-15T07:56:25.342Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据库连接池">
+<meta name="twitter:description" content="我们项目过程中常常需要用到数据库连接池，拿常用的druid来说我们需要设置初始连接池大小（initial-size）和最大连接活跃数（max-active）。那么数据库连接池大小到底应该设置成多少呢？ 不妨意淫一下，你手里有个网站，并发压力虽然还没到 Facebook 那个级别，但是呢？也有个1万上下的并发量！也就是说差不多2万左右的 TPS。那么问题来了！这个网站的数据库连接池应该设置成多大合适">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">魏巍</h5>
+          <a href="mailto:weiwei@njbandou.com" title="weiwei@njbandou.com" class="mail">weiwei@njbandou.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/lokeywei" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">数据库连接池</div>
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">数据库连接池</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-04-05T06:26:47.000Z" itemprop="datePublished" class="page-time">
+  2019-04-05
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/数据库/">数据库</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#连接池应该设置多小"><span class="post-toc-number">1.</span> <span class="post-toc-text">连接池应该设置多小</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#你需要的是一个小连接池，和一个等待连接的线程队列"><span class="post-toc-number">2.</span> <span class="post-toc-text">你需要的是一个小连接池，和一个等待连接的线程队列</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#连接池和线程池"><span class="post-toc-number">3.</span> <span class="post-toc-text">连接池和线程池</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-数据库连接池大小" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">数据库连接池</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-04-05 14:26:47" datetime="2019-04-05T06:26:47.000Z" itemprop="datePublished">2019-04-05</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/数据库/">数据库</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>我们项目过程中常常需要用到数据库连接池，拿常用的druid来说我们需要设置初始连接池大小（initial-size）和最大连接活跃数（max-active）。那么数据库连接池大小到底应该设置成多少呢？</p>
+<p>不妨意淫一下，你手里有个网站，并发压力虽然还没到 Facebook 那个级别，但是呢？也有个1万上下的并发量！也就是说差不多2万左右的 TPS。那么问题来了！这个网站的数据库连接池应该设置成多大合适呢？其实这个问法本身就是有问题的，我们需要反过来问，正确问法应该是：“这个网站的数据库连接池应该设置成多小合适呢？”对 Oracle 数据库进行了压力测试，模拟 9600 个并发线程来操作数据库，每两次数据库操作之间 sleep 550ms，注意，视频中刚开始设置的线程池大小为 2048。让我们来看看数据库连接池的大小为 2048 性能测试结果的鬼样子：每个请求要在连接池队列里等待 33ms，获得连接之后，执行SQL需要耗时77ms, CPU 消耗维持在 95% 左右；接下来，我们将连接池的大小改小点，设置成 1024，其他测试参数不变，结果咋样？”这里，获取连接等待时长基本不变，但是 SQL 的执行耗时降低了！”</p>
+<p>接下来，我们再设置小些，连接池的大小降低到 96，并发数等其他参数不变，看看结果如何：每个请求在连接池队列中的平均等待时间为 1ms, SQL 执行耗时为 2ms.我们没调整任何东西，仅仅只是将数据库连接池的大小降低了，这样，就能把之前平均 100ms 响应时间缩短到了 3ms。吞吐量指数级上升啊！</p>
+<h2 id="连接池应该设置多小"><a href="#连接池应该设置多小" class="headerlink" title="连接池应该设置多小"></a>连接池应该设置多小</h2><p>我们不妨想一下，为啥 Nginx 内部仅仅使用了 4 个线程，其性能就大大超越了 100 个进程的 Apache HTTPD 呢？追究其原因的话，回想一下计算机科学的基础知识，答案其实非常明显。</p>
+<p>要知道，即使是单核 CPU 的计算机也能“同时”运行着数百个线程。但我们其实都知道，这只不过是操作系统快速切换时间片，跟我们玩的一个小把戏罢了。</p>
+<p>一核 CPU同一时刻只能执行一个线程，然后操作系统切换上下文，CPU 核心快速调度，执行另一个线程的代码，不停反复，给我们造成了所有进程同时运行假象。</p>
+<p>其实，在一核 CPU 的机器上，顺序执行A和B永远比通过时间分片切换“同时”执行A和B要快，其中原因，学过操作系统这门课程的童鞋应该很清楚。一旦线程的数量超过了 CPU 核心的数量，再增加线程数系统就只会更慢，而不是更快，因为这里涉及到上下文切换耗费的额外的性能。</p>
+<h2 id="你需要的是一个小连接池，和一个等待连接的线程队列"><a href="#你需要的是一个小连接池，和一个等待连接的线程队列" class="headerlink" title="你需要的是一个小连接池，和一个等待连接的线程队列"></a>你需要的是一个小连接池，和一个等待连接的线程队列</h2><p>假设说你有 10000 个并发访问，你需要多大的连接池？</p>
+<p>改成 1000，太高？改成 100？还是太多了。</p>
+<p>你仅仅需要一个大小为 10 数据库连接池，然后让剩下的业务线程都在队列里等待就可以了。</p>
+<p>连接池中的连接数量大小应该设置成：数据库能够有效同时进行的查询任务数（通常情况下来说不会高于 2*CPU核心数）。<br>你应该经常会看到一些用户量不是很大的 web 应用中，为应付大约十来个的并发，却将数据库连接池设置成 100， 200 的情况。请不要过度配置您的数据库连接池的大小。</p>
+<h2 id="连接池和线程池"><a href="#连接池和线程池" class="headerlink" title="连接池和线程池"></a>连接池和线程池</h2><p>谈谈最近遇到一个项目，由于硬件方面的原因必须使得每个请求延迟数秒处理，显然这样会造成请求的堆积。我们常用的延迟处理方法就是新建线程，那么这个线程池大小应该如何设置？</p>
+<p>参照上面的理解，需要设置一个核心线程数量少但是请求队列很长的线程池，但等待队列中的线程是无法进行计时的，简单的说就是原来要延迟两秒的请求可能因为线程呆在请求队列中等它开始计时的时候已经过去两秒，这个延迟的时间是和最大线程数有关的。</p>
+<p>此时有两个解决方案，一个是去掉线程池，因为这种请求的数量很有限即使不停地创建和销毁资源也不会给整个系统造成负担，另一个解决方案是增加最大线程数。两个方案在当前规模都可以在不增加太多系统负担的情况下解决掉这个问题，在实际的测试当中将线程池的大小设置成并发数量的60%达到了预期效果。当然这只是特殊情况，在普通的业务情况下核心线程和最大线程数设置成10完全没有问题。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-15T07:56:25.342Z" itemprop="dateUpdated">2019-07-15 15:56:25</time>
+</span><br>
+
+
+        
+    </div>
+    
+    <footer>
+        <a href="https://blog.wweiwei.me">
+            <img src="/img/avatar.jpg" alt="魏巍">
+            魏巍
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/6331d382/&title=《数据库连接池》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/6331d382/&title=《数据库连接池》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/6331d382/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《数据库连接池》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/6331d382/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/6331d382/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/a34a74e6/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">ACID与CAP</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/7dc02e3a/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Flink Join实例分析</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="bottom">
+        <p><span> &copy; 2019 Wei Wei. All rights reserved.</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/6331d382/&title=《数据库连接池》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/6331d382/&title=《数据库连接池》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/6331d382/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《数据库连接池》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/6331d382/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/6331d382/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://blog.wweiwei.me/posts/6331d382/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '正在加载';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '加载好了';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

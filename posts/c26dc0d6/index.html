@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>写在大数据学习开始的话 | 魏巍的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content>
+    <meta name="description" content="每当学习一个新东西都有种无从下手的感觉，但是等你回顾这一步一步的过程时，你才会体会到之前努力的价值。 Flink git地址 官方文档 中文文档 技术博客  花了大概一周的时间也不敢说自己大概知道Flink是个什么，简单的根据官方文档搭建了一下standalone（单机运行）环境，跑了一下WordCount Example。然后我就发现不了解Flink的信息处理机制接下来根本无法进行，这个时候体现">
+<meta property="og:type" content="article">
+<meta property="og:title" content="写在大数据学习开始的话">
+<meta property="og:url" content="https://blog.wweiwei.me/posts/c26dc0d6/index.html">
+<meta property="og:site_name" content="魏巍的博客">
+<meta property="og:description" content="每当学习一个新东西都有种无从下手的感觉，但是等你回顾这一步一步的过程时，你才会体会到之前努力的价值。 Flink git地址 官方文档 中文文档 技术博客  花了大概一周的时间也不敢说自己大概知道Flink是个什么，简单的根据官方文档搭建了一下standalone（单机运行）环境，跑了一下WordCount Example。然后我就发现不了解Flink的信息处理机制接下来根本无法进行，这个时候体现">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-07-12T02:28:58.756Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="写在大数据学习开始的话">
+<meta name="twitter:description" content="每当学习一个新东西都有种无从下手的感觉，但是等你回顾这一步一步的过程时，你才会体会到之前努力的价值。 Flink git地址 官方文档 中文文档 技术博客  花了大概一周的时间也不敢说自己大概知道Flink是个什么，简单的根据官方文档搭建了一下standalone（单机运行）环境，跑了一下WordCount Example。然后我就发现不了解Flink的信息处理机制接下来根本无法进行，这个时候体现">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">魏巍</h5>
+          <a href="mailto:weiwei@njbandou.com" title="weiwei@njbandou.com" class="mail">weiwei@njbandou.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/lokeywei" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">写在大数据学习开始的话</div>
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">写在大数据学习开始的话</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-06T02:16:31.000Z" itemprop="datePublished" class="page-time">
+  2019-03-06
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/大数据/">大数据</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Flink"><span class="post-toc-number">1.</span> <span class="post-toc-text">Flink</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#简单介绍下Flink"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">简单介绍下Flink</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Blink"><span class="post-toc-number">2.</span> <span class="post-toc-text">Blink</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Hadoop-Blink"><span class="post-toc-number">3.</span> <span class="post-toc-text">Hadoop+Blink</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结尾"><span class="post-toc-number">4.</span> <span class="post-toc-text">结尾</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-写在大数据学习开始的话" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">写在大数据学习开始的话</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-06 10:16:31" datetime="2019-03-06T02:16:31.000Z" itemprop="datePublished">2019-03-06</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/大数据/">大数据</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>每当学习一个新东西都有种无从下手的感觉，但是等你回顾这一步一步的过程时，你才会体会到之前努力的价值。</p>
+<h2 id="Flink"><a href="#Flink" class="headerlink" title="Flink"></a>Flink</h2><ul>
+<li><a href="https://github.com/apache/flink" target="_blank" rel="noopener">git地址</a></li>
+<li><a href="https://ci.apache.org/projects/flink/flink-docs-release-1.6/" target="_blank" rel="noopener">官方文档</a></li>
+<li><a href="https://flink-china.org/" target="_blank" rel="noopener">中文文档</a></li>
+<li><a href="http://wuchong.me" target="_blank" rel="noopener">技术博客</a></li>
+</ul>
+<p>花了大概一周的时间也不敢说自己大概知道Flink是个什么，简单的根据官方文档搭建了一下standalone（单机运行）环境，跑了一下WordCount Example。然后我就发现不了解Flink的信息处理机制接下来根本无法进行，这个时候体现的英语水平的重要性了，官方文档看不懂，只能去看看国人写的技术博客。值得庆幸的是Flink是用java和scala语言写的，而scala是一种类java语言并且可以直接运行在JVM，这就意味着如果你是个Java程序员你不要安装其他额外的环境就可以在本机上跑Flink。</p>
+<h3 id="简单介绍下Flink"><a href="#简单介绍下Flink" class="headerlink" title="简单介绍下Flink"></a>简单介绍下Flink</h3><p>Flink是Apache开源的一个顶级项目，主要用于数据流处理与批处理。Flink由两种基本概念stream（流）和transformations（转换）组成。</p>
+<ul>
+<li>stream<blockquote>
+<p>Flink具有四个数据抽象类型DataSteam(流处理)，DataSet(数据集合也就是批处理)，Table和SQL,其他的三种数据类型都是基于DataSteam的。</p>
+</blockquote>
+</li>
+<li>transformations<blockquote>
+<p>转换需要由数据流作为Source(数据源)，然后通过调用stream api进行转换操作，最后产生一个或者多个Sink（输出）。</p>
+</blockquote>
+另外,除了以上两种概念以外还有算子（operator），窗口（windows），以及checkpoint等关键概念我这里也不再赘述了。</li>
+</ul>
+<h2 id="Blink"><a href="#Blink" class="headerlink" title="Blink"></a>Blink</h2><ul>
+<li><a href="https://www.jianshu.com/p/37a6acfc3124" target="_blank" rel="noopener">新闻地址</a></li>
+<li><a href="https://github.com/apache/flink/tree/blink" target="_blank" rel="noopener">git地址</a></li>
+</ul>
+<p>提到Flink就没办法不提Blink,就想你在国内聊Java开发你也没办法绕过阿里巴巴。由阿里巴巴内部优化的Blink在通过去年双11大考后于今年一月份作为Fink的分支正式开源，分支回流也在同步进行。</p>
+<h2 id="Hadoop-Blink"><a href="#Hadoop-Blink" class="headerlink" title="Hadoop+Blink"></a>Hadoop+Blink</h2><p>Hadoop YARN(Yet Another Resource Negotiator)是Hadoop的另一种数据处理模式，允许任何一个分布式程序基于Hadoop的数据运行。而Hadoop的优点就是支持用户在不了解分布式底层的情况下开发分布式程序，并且支持服务器的横向扩展。也就是说我们在每个数据项目开始时只需要部署一台服务器，当后期业务扩展时只需要横向地增加服务器而不需要考虑集群的架构。另外，Hadoop和Blink的高可用性（HA）会保证在一台服务器宕机的情况下这台服务器上的备份会立即运行在其他服务器上。</p>
+<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>对于技术人员来说，每个概念都不容模糊，先学后用，才能学以致用。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-12T02:28:58.756Z" itemprop="dateUpdated">2019-07-12 10:28:58</time>
+</span><br>
+
+
+        
+    </div>
+    
+    <footer>
+        <a href="https://blog.wweiwei.me">
+            <img src="/img/avatar.jpg" alt="魏巍">
+            魏巍
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/c26dc0d6/&title=《写在大数据学习开始的话》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/c26dc0d6/&title=《写在大数据学习开始的话》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/c26dc0d6/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《写在大数据学习开始的话》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/c26dc0d6/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/c26dc0d6/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/c015540e/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Flink初体验</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/447c456f/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">个人博客正式上线</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="bottom">
+        <p><span> &copy; 2019 Wei Wei. All rights reserved.</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/c26dc0d6/&title=《写在大数据学习开始的话》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/c26dc0d6/&title=《写在大数据学习开始的话》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/c26dc0d6/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《写在大数据学习开始的话》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/c26dc0d6/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/c26dc0d6/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://blog.wweiwei.me/posts/c26dc0d6/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '正在加载';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '加载好了';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

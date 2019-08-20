@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Kafka的概念以及使用 | 魏巍的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="kafka">
+    <meta name="description" content="Apache Kafka是一个分布式流处理平台，它主要有三个主要功能：  和消息队列和企业级信息系统类似的，发布和订阅数据流 以容错的方式持久化数据流 协调处理数据流  Kafka通常被应用在以下两个场景：  建立实时数据流通道，在系统和应用之间传递数据 建立实时数据流应用，处理转换数据流  接下来介绍几个概念  kafka作为一个集群运行在一台或多台服务器上。 Kafka集群以主题的为储数据流。">
+<meta name="keywords" content="kafka">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka的概念以及使用">
+<meta property="og:url" content="https://blog.wweiwei.me/posts/278a9f7/index.html">
+<meta property="og:site_name" content="魏巍的博客">
+<meta property="og:description" content="Apache Kafka是一个分布式流处理平台，它主要有三个主要功能：  和消息队列和企业级信息系统类似的，发布和订阅数据流 以容错的方式持久化数据流 协调处理数据流  Kafka通常被应用在以下两个场景：  建立实时数据流通道，在系统和应用之间传递数据 建立实时数据流应用，处理转换数据流  接下来介绍几个概念  kafka作为一个集群运行在一台或多台服务器上。 Kafka集群以主题的为储数据流。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-07-11T08:23:25.877Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kafka的概念以及使用">
+<meta name="twitter:description" content="Apache Kafka是一个分布式流处理平台，它主要有三个主要功能：  和消息队列和企业级信息系统类似的，发布和订阅数据流 以容错的方式持久化数据流 协调处理数据流  Kafka通常被应用在以下两个场景：  建立实时数据流通道，在系统和应用之间传递数据 建立实时数据流应用，处理转换数据流  接下来介绍几个概念  kafka作为一个集群运行在一台或多台服务器上。 Kafka集群以主题的为储数据流。">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">魏巍</h5>
+          <a href="mailto:weiwei@njbandou.com" title="weiwei@njbandou.com" class="mail">weiwei@njbandou.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/lokeywei" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Kafka的概念以及使用</div>
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Kafka的概念以及使用</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-14T07:30:30.000Z" itemprop="datePublished" class="page-time">
+  2019-03-14
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/大数据/">大数据</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装"><span class="post-toc-number">1.</span> <span class="post-toc-text">安装</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Maven集成"><span class="post-toc-number">2.</span> <span class="post-toc-text">Maven集成</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Flink从Kafka读取数据与输出数据"><span class="post-toc-number">3.</span> <span class="post-toc-text">Flink从Kafka读取数据与输出数据</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Kafka的概念以及使用" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Kafka的概念以及使用</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-14 15:30:30" datetime="2019-03-14T07:30:30.000Z" itemprop="datePublished">2019-03-14</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/大数据/">大数据</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>Apache Kafka是一个分布式流处理平台，它主要有三个主要功能：</p>
+<ul>
+<li>和消息队列和企业级信息系统类似的，发布和订阅数据流</li>
+<li>以容错的方式持久化数据流</li>
+<li>协调处理数据流</li>
+</ul>
+<p>Kafka通常被应用在以下两个场景：</p>
+<ul>
+<li>建立实时数据流通道，在系统和应用之间传递数据</li>
+<li>建立实时数据流应用，处理转换数据流</li>
+</ul>
+<p>接下来介绍几个概念</p>
+<ul>
+<li>kafka作为一个集群运行在一台或多台服务器上。</li>
+<li>Kafka集群以主题的为储数据流。</li>
+<li>每条记录由一个键值对（key-value）和一个时间戳组成。</li>
+</ul>
+<p>Kafka有四个核心API：</p>
+<ul>
+<li>Producer API允许应用发布数据流至一个或多个Topic。</li>
+<li>Consumer API允许应用订阅一个或多个Topic，并处理所产生的对他们记录的数据流。</li>
+<li>Streams API允许应用充当流处理器，从一个或多个Topic消费输入流，并产生一个输出流至一个或多个输出的主题。</li>
+<li>Connector API允许现有数据系统创建可重用的Producer和Consumer连接Topic。</li>
+</ul>
+<p>以上内容翻译自<a href="http://kafka.apache.org" target="_blank" rel="noopener">kafka官方文档</a>。通过这些概念的学习我们了解到kafka是一种分布式的消息的队列。它的高可用特性依赖于ZooKeeper这点和Flink十分相似，通过通过选举Leader的方式来保证服务可用，这里也就不再过多介绍。接下来我们进入kafka的安装使用环节。<br></p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>下载安装<a href="https://www.apache.org/dyn/closer.cgi?path=/kafka/2.1.0/kafka_2.11-2.1.0.tgz" target="_blank" rel="noopener">kafka_2.11-2.1.0</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ tar -xzf kafka_2.11-2.1.0.tgz</span><br><span class="line">$ cd kafka_2.11-2.1.0</span><br><span class="line">#启动ZooKeeper</span><br><span class="line">$ bin/zookeeper-server-start.sh config/zookeeper.properties</span><br><span class="line">#启动kafka</span><br><span class="line">$ bin/kafka-server-start.sh config/server.properties</span><br><span class="line">#创建test主题</span><br><span class="line">$bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test</span><br></pre></td></tr></table></figure></p>
+<p>由于我将kafka安装在服务器上了，所以还要修改server.properties文件，否则无法通过外网访问kafka消息队列。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">advertised.listeners=PLAINTEXT://ip:9092 //填上服务器id</span><br></pre></td></tr></table></figure></p>
+<p>修改后需要重启kafka服务。</p>
+<h2 id="Maven集成"><a href="#Maven集成" class="headerlink" title="Maven集成"></a>Maven集成</h2><p>引入pom依赖，版本号一定要和Spring版本匹配否则编译会出现ClassNotFound异常。我使用的是Spring boot 2.1.3.RELEASE版本，对应依赖如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework.kafka&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-kafka&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;2.2.0.RELEASE&lt;/version&gt;</span><br><span class="line"> &lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<p>添加yml配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">   kafka:</span><br><span class="line">     bootstrap-servers: ip:9092  //HA状态下填写多条数据</span><br><span class="line">     producer:</span><br><span class="line">       retries: 0</span><br><span class="line">       batch-size: 16384</span><br><span class="line">       buffer-memory: 33554432</span><br><span class="line">       # 指定消息key和消息体的编解码方式</span><br><span class="line">       key-serializer:</span><br><span class="line">            org.apache.kafka.common.serialization.StringSerializer</span><br><span class="line">       value-deserializer: </span><br><span class="line">            org.apache.kafka.common.serialization.StringDeserializer</span><br><span class="line">     consumer:</span><br><span class="line">       # 指定默认消费者group id</span><br><span class="line">       group-id: test</span><br><span class="line">       auto-offset-reset: earliest</span><br><span class="line">       auto-commit-interval: 100</span><br><span class="line">       # 指定消息key和消息体的编解码方式</span><br><span class="line">       key-serializer: </span><br><span class="line">            org.apache.kafka.common.serialization.StringSerializer</span><br><span class="line">       value-deserializer: </span><br><span class="line">            org.apache.kafka.common.serialization.StringDeserializer</span><br></pre></td></tr></table></figure></p>
+<p>添加Consumer<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class KafkaReceiver &#123;</span><br><span class="line">    @KafkaListener(topics = &#123;&quot;test&quot;&#125;)</span><br><span class="line">    public void listen(ConsumerRecord&lt;?, ?&gt; record) &#123;</span><br><span class="line">        Optional&lt;?&gt; kafkaMessage = Optional.ofNullable(record.value());</span><br><span class="line">        if (kafkaMessage.isPresent()) &#123;</span><br><span class="line">            Object message = kafkaMessage.get();</span><br><span class="line">            System.out.println(&quot;------------------ message =&quot; + message);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>添加Producer<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class KafkaSender &#123;</span><br><span class="line">    private KafkaTemplate&lt;String, String&gt; kafkaTemplate;</span><br><span class="line">    //发送消息方法</span><br><span class="line">    public void send(String topic,String msg) &#123;</span><br><span class="line">        kafkaTemplate.send(topic,msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看出，kafka的使用和传统的消息队列基本一致。</p>
+<h2 id="Flink从Kafka读取数据与输出数据"><a href="#Flink从Kafka读取数据与输出数据" class="headerlink" title="Flink从Kafka读取数据与输出数据"></a>Flink从Kafka读取数据与输出数据</h2><p>引入pom依赖<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;properties&gt;</span><br><span class="line">     &lt;flink.version&gt;1.6.4&lt;/flink.version&gt;</span><br><span class="line"> &lt;/properties&gt;</span><br><span class="line"></span><br><span class="line"> &lt;dependency&gt;</span><br><span class="line">         &lt;groupId&gt;org.apache.flink&lt;/groupId&gt;</span><br><span class="line">         &lt;artifactId&gt;flink-connector-kafka-0.11_2.11&lt;/artifactId&gt;</span><br><span class="line">         &lt;version&gt;$&#123;flink.version&#125;&lt;/version&gt;</span><br><span class="line"> &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line"> &lt;dependency&gt;</span><br><span class="line">         &lt;groupId&gt;org.apache.flink&lt;/groupId&gt;</span><br><span class="line">         &lt;artifactId&gt;flink-clients_2.11&lt;/artifactId&gt;</span><br><span class="line">         &lt;version&gt;$&#123;flink.version&#125;&lt;/version&gt;</span><br><span class="line"> &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line"> &lt;dependency&gt;</span><br><span class="line">         &lt;groupId&gt;org.apache.flink&lt;/groupId&gt;</span><br><span class="line">         &lt;artifactId&gt;flink-streaming-java_2.11&lt;/artifactId&gt;</span><br><span class="line">         &lt;version&gt;$&#123;flink.version&#125;&lt;/version&gt;</span><br><span class="line"> &lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<p>Java测试用例<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) throws Exception&#123;</span><br><span class="line">    //新建Flink本地运行环境</span><br><span class="line">    final StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironment();</span><br><span class="line">    //添加配置</span><br><span class="line">    Properties properties = new Properties();</span><br><span class="line">    properties.setProperty(&quot;bootstrap.servers&quot;, &quot;ip:9092&quot;);</span><br><span class="line">    properties.setProperty(&quot;zookeeper.connect&quot;, &quot;ip:2181&quot;);</span><br><span class="line">    properties.setProperty(&quot;group.id&quot;, &quot;test&quot;);</span><br><span class="line">    //使用Consumer011版本要和引入依赖flink-connector-kafka-0.11_2.11相同</span><br><span class="line">    FlinkKafkaConsumer011&lt;String&gt; myConsumer = new FlinkKafkaConsumer011&lt;String&gt;(&quot;test&quot;, new SimpleStringSchema(),properties);</span><br><span class="line">    DataStream&lt;String&gt; stream = env.addSource(myConsumer);</span><br><span class="line"></span><br><span class="line">    stream.map(new MapFunction&lt;String, String&gt;() &#123;</span><br><span class="line">        public String map(String value) throws Exception &#123;</span><br><span class="line">            return &quot;Stream Value: &quot; + value;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).print();</span><br><span class="line">    //作为输出</span><br><span class="line">    //stream.addSink(new FlinkKafkaProducer011&lt;&gt;(</span><br><span class="line">    //        &quot;ip:9092&quot;,</span><br><span class="line">    //        &quot;test-producer&quot;,</span><br><span class="line">    //        new SimpleStringSchema())).name(&quot;flink-connectors-kafka&quot;)</span><br><span class="line">    //        .setParallelism(5);</span><br><span class="line">    env.execute();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这里介绍kafka消息队列主要是因为它具有高可用以及高并发的优点，一般会用作数据源和数据处理引擎之间的通道。由于还在学习阶段，这里主要介绍基本的安装以及开发环境的集成。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-11T08:23:25.877Z" itemprop="dateUpdated">2019-07-11 16:23:25</time>
+</span><br>
+
+
+        
+    </div>
+    
+    <footer>
+        <a href="https://blog.wweiwei.me">
+            <img src="/img/avatar.jpg" alt="魏巍">
+            魏巍
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kafka/">kafka</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/278a9f7/&title=《Kafka的概念以及使用》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/278a9f7/&title=《Kafka的概念以及使用》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/278a9f7/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Kafka的概念以及使用》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/278a9f7/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/278a9f7/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/cf658703/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Flink转换函数</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/348cf105/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Flink高可用部署</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="bottom">
+        <p><span> &copy; 2019 Wei Wei. All rights reserved.</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/278a9f7/&title=《Kafka的概念以及使用》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/278a9f7/&title=《Kafka的概念以及使用》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/278a9f7/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Kafka的概念以及使用》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/278a9f7/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/278a9f7/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://blog.wweiwei.me/posts/278a9f7/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '正在加载';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '加载好了';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

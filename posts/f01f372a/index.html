@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Java架构师学习路线 | 魏巍的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="架构师">
+    <meta name="description" content="框架源码专题 应用框架Spring Spring IOC源码剖析 整体认知spring 体系结构 理解Spring IOC 容器设计原理 掌握Bean生命周期 初始化InitializingBean/@PostConstruct Bean的后置处理器BeanPostProcessor源码分析 销毁DisposableBean/@PreDestroy Spring Context 装载过程源码分析">
+<meta name="keywords" content="架构师">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java架构师学习路线">
+<meta property="og:url" content="https://blog.wweiwei.me/posts/f01f372a/index.html">
+<meta property="og:site_name" content="魏巍的博客">
+<meta property="og:description" content="框架源码专题 应用框架Spring Spring IOC源码剖析 整体认知spring 体系结构 理解Spring IOC 容器设计原理 掌握Bean生命周期 初始化InitializingBean/@PostConstruct Bean的后置处理器BeanPostProcessor源码分析 销毁DisposableBean/@PreDestroy Spring Context 装载过程源码分析">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-20T09:25:13.388Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java架构师学习路线">
+<meta name="twitter:description" content="框架源码专题 应用框架Spring Spring IOC源码剖析 整体认知spring 体系结构 理解Spring IOC 容器设计原理 掌握Bean生命周期 初始化InitializingBean/@PostConstruct Bean的后置处理器BeanPostProcessor源码分析 销毁DisposableBean/@PreDestroy Spring Context 装载过程源码分析">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">魏巍</h5>
+          <a href="mailto:weiwei@njbandou.com" title="weiwei@njbandou.com" class="mail">weiwei@njbandou.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/lokeywei" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Java架构师学习路线</div>
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Java架构师学习路线</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-05-10T02:26:47.000Z" itemprop="datePublished" class="page-time">
+  2019-05-10
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Java/">Java</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+
+<article id="post-Java架构师学习路线" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Java架构师学习路线</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-05-10 10:26:47" datetime="2019-05-10T02:26:47.000Z" itemprop="datePublished">2019-05-10</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Java/">Java</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>框架源码专题</p>
+<p>应用框架Spring</p>
+<p>Spring IOC源码剖析</p>
+<p>整体认知spring 体系结构</p>
+<p>理解Spring IOC 容器设计原理</p>
+<p>掌握Bean生命周期</p>
+<p>初始化InitializingBean/@PostConstruct</p>
+<p>Bean的后置处理器BeanPostProcessor源码分析</p>
+<p>销毁DisposableBean/@PreDestroy</p>
+<p>Spring Context 装载过程源码分析</p>
+<p>BeanFactoryPostProcessor源码分析</p>
+<p>BeanDefinitionRegistryPostProcessor源码分析</p>
+<p>Factorybean与Beanfactory区别</p>
+<p>Spring Aop源码剖析</p>
+<p>深入理解AOP的底层实现</p>
+<p>掌握Spring AOP 编程概念</p>
+<p>AOP注解编程</p>
+<p>@EnableAspectJAutoProxy</p>
+<p>@Before/@After/@AfterReturning/@AfterThrowing/@Around</p>
+<p>@Pointcut</p>
+<p>基于Spring AOP 实现应用插件机制</p>
+<p>Spring  AOP源码分析</p>
+<p>ProxyFactory源码解析</p>
+<p>AOP代理源码解析</p>
+<p>JdkDynamicAopProxy</p>
+<p>Cglib2AopProxy</p>
+<p>拦截器链与织入源码解析</p>
+<p>Advice</p>
+<p>Interceptor</p>
+<p>Spring事务控制与底层源码分析</p>
+<p>@EnableTransactionManagement</p>
+<p>@Transactional</p>
+<p>Spring MVC源码剖析</p>
+<p>理解MVC设计思想</p>
+<p>从DispatchServlet 出发 讲述MVC体系结构组成</p>
+<p>基于示例展开DispatchServlet 核心类结构</p>
+<p>MVC执行流程讲解</p>
+<p>RequestMaping 实现原理 </p>
+<p>MVC初始化过程源码深度解读</p>
+<p>熟悉MVC组件体系</p>
+<p>映射器原理实现</p>
+<p>执行适配器原理实现</p>
+<p>视图解析器原理实现</p>
+<p>异常捕捉器原理实现</p>
+<p>Spring注解式开发</p>
+<p>@ComponentScan</p>
+<p>@Bean</p>
+<p>@Configuration</p>
+<p>@Component/@Service@/Controller/@Repository</p>
+<p>@Conditional</p>
+<p>@Lazy</p>
+<p>@Scope</p>
+<p>@Import</p>
+<p>@Value</p>
+<p>@Autowired/@Resources/@Inject</p>
+<p>@Profile</p>
+<p>Spring 5新特性</p>
+<p>新特性详解</p>
+<p>响应式编程模型</p>
+<p>函数式风格的ApplicationContext</p>
+<p>Kotlin表达式的支持</p>
+<p>SpringWebFlux模块讲解</p>
+<p>ORM框架MyBatis</p>
+<p>MyBatis快速掌握</p>
+<p>MyBatis 与 Hibernate 对比</p>
+<p>传统JDBC弊端</p>
+<p>mybatis全局参数详解</p>
+<p>逆向工程</p>
+<p>详解configuration 、properties、 settings、 typeAliases、 mapper</p>
+<p>掌握xml和annotations和Criteria差异</p>
+<p>Mybatis 源码分析</p>
+<p>整体认识mybatis源码包</p>
+<p>Mybatis核心概念</p>
+<p>Spring 与MyBatis 集成</p>
+<p>Configuration、Mapper、SqlSession、Executor源码解析</p>
+<p>Mybatis徒手实现</p>
+<p>熟悉MyBatis内部运行机制</p>
+<p>熟悉myBatis 初始化过程</p>
+<p>源码debug一行行详细讲解</p>
+<p>MyBatis二级缓存应用</p>
+<p>手写实现一套mybatis框架</p>
+<p>学习源码中的优秀设计模式</p>
+<p>工厂模式</p>
+<p>单例模式</p>
+<p>代理模式</p>
+<p>模板模式</p>
+<p>装饰器模式</p>
+<p>责任链模式</p>
+<p>观察者模式</p>
+<p>策略模式</p>
+<p>构建模式</p>
+<p>原型模式</p>
+<p>并发编程专题</p>
+<p>JMM内存模型</p>
+<p>现代计算机模型基础理论知识</p>
+<p>什么是线程深入理解Java线程</p>
+<p>JMM Volatile 缓存一致性协议</p>
+<p>指令重排、可见性、原子性、顺序一致性、happens-beofre详解 as-if-serial</p>
+<p>并发同步处理</p>
+<p>Synchronized  </p>
+<p>JVM内置锁实现原理</p>
+<p>对象加锁过程</p>
+<p>锁的膨胀升级过程分析</p>
+<p>AbstractQueuedSynchronizer（AQS）</p>
+<p>乐观锁悲观锁重入锁公平锁非公平锁锁的粒度</p>
+<p>并发包之locks锁</p>
+<p>ReentrantLock  ReentrantReadWriteLock ReadWriteLock</p>
+<p>Condition 条件队列 同步队列</p>
+<p>深入讲解、源码分析</p>
+<p>并发包之tools 限制</p>
+<p>CountDownLatch</p>
+<p>Semaphore</p>
+<p>CyclicBarrier</p>
+<p>并发包之atomic原子</p>
+<p>atomic类 ThreadLocal ABA JMM</p>
+<p>cas算法乐观锁</p>
+<p>Unsafe魔法类详解</p>
+<p>并发包之collections容器</p>
+<p>并发Queue</p>
+<p>BlockingQueue</p>
+<p>ArrayBlockingQueue 数组有界队列</p>
+<p>ConcurrentLinkedQueue 链表有界队列</p>
+<p>PriorityBlockingQueue 优先级排序无界队列</p>
+<p>DelayQueue 延时无界队列</p>
+<p>Map</p>
+<p>ConcurrentHashMap</p>
+<p>HashMap</p>
+<p>并发List Set  </p>
+<p>CopyOnWriteArrayList</p>
+<p>CopyOnWriteArraySet</p>
+<p>ArrayList</p>
+<p>LinkedList</p>
+<p>并发包之executor线程池</p>
+<p>Futrue</p>
+<p>RunnableFuture</p>
+<p>RunnableFuture</p>
+<p>RunnableScheduledFuture</p>
+<p>ScheduledFuture</p>
+<p>Thread Runable  Callable</p>
+<p>Executor</p>
+<p>AbstractExecutorService</p>
+<p>ThreadPoolExecutor</p>
+<p>ScheduledExecutorService</p>
+<p>ScheduledThreadPoolExecutor</p>
+<p>线程详解与源码剖析</p>
+<p>并发之ForkJoin框架</p>
+<p>ForkJoin框架介绍</p>
+<p>ForkJoin案列讲解</p>
+<p>ForkJoin原理解析</p>
+<p>分布式框架专题</p>
+<p>初识分布式</p>
+<p>初识分布式系统定义与意义</p>
+<p>分布式系统的基础知识</p>
+<p>淘宝电商架构演变过程</p>
+<p>大型网站架构模式</p>
+<p>大型网站的分层、分割模式</p>
+<p>大型分布式、集群模式</p>
+<p>分布式中缓存、异步模式</p>
+<p>分布式系统冗余、扩展模式</p>
+<p>大型网站架构要素</p>
+<p>分布式系统中高并发原子：无状态、拆分、服务化、消息队列</p>
+<p>分布式系统之高可用原子:降级、限流、备份、监听</p>
+<p>分布式中间件</p>
+<p>分布式服务治理中间件(Zookeeper，Dubbo)</p>
+<p>分布式下应用系统服务化通讯技术</p>
+<p>从集中到分布式特点ACID到CAP/BASE基础</p>
+<p>分布式协同框架Zookeeper</p>
+<p>Zookeeper快速入门</p>
+<p>Zookeeper多节点集群部署实战</p>
+<p>深入Zookeeper典型应用场景</p>
+<p>服务注册与订阅</p>
+<p>分布式配置中心</p>
+<p>分布式锁</p>
+<p>深入Zookeeper中znode、watcher、ACL、客户端API详解</p>
+<p>深入Zookeeper客户端服务端源码分析</p>
+<p>深入熟悉Zookeeper迁移、扩容、监控详解</p>
+<p>RPC服务框架Dubbo</p>
+<p>从0到1整体认知分布式系统</p>
+<p>分布式架构的发展历史与背景</p>
+<p>如何着手架构一套分布式系统</p>
+<p>分布式架构所带来的成本与风险</p>
+<p>快速掌握Dubbo常规应用</p>
+<p>Dubbo的作用简要说明、快速演示Dubbo 调用示例</p>
+<p>Dubbo 架构与基本角色说明</p>
+<p>Dubbo基本应用与配置说明</p>
+<p>Dubbo 企业级应用进阶</p>
+<p>分布式项目开发与联调</p>
+<p>Dubbo控制管理后台使用</p>
+<p>Dubbo注册中心使用</p>
+<p>RPC协议底层原理与实现</p>
+<p>RPC协议基本组成</p>
+<p>RPC协议报文编码与实现详解</p>
+<p>Dubbo中所支持RPC协议使用</p>
+<p>Dubbo 调用模块详解</p>
+<p>Dubbo 调用模块详解（容错、负载均衡、异步调用、过滤器）</p>
+<p>Dubbo 其它使用场景详解（泛化调用与引用、隐示传参、令牌验证）</p>
+<p>Dubbo 路由功能使用</p>
+<p>分布式消息中间件(RockerMq，Rabbitmq，Kafka)</p>
+<p>初识消息中间件特性与规划</p>
+<p>阿里双十一交易系统与统计系统场景讲解</p>
+<p>常见消息中间件Rabbitmq、Kafka、ActiveMq、RocketMq对比</p>
+<p>分布式消息框架之RocketMq</p>
+<p>解密Rocket,Mq集群部署与快速入门</p>
+<p>深入分析RocketMq模块划分与集群原理讲解</p>
+<p>详解普通消息、顺序消息、事务消息、定时消息</p>
+<p>深入RocketMq Broker、Consumer、Producer源码分析</p>
+<p>详解RocketMq监控与运维</p>
+<p>企业实战RocketMq消息中间件API架构开发</p>
+<p>分布式消息框架之Rabbitmq</p>
+<p>Rabbitmq入门与高可用集群部署实战</p>
+<p>详解Rabbitmq消息分发与主题消息分布功能</p>
+<p>Rabbitmq消息路由机制详解</p>
+<p>Rabbitmq消息确认机制详解</p>
+<p>Rabbitmq Web监控平台使用</p>
+<p>Rabbitmq镜像队列详解</p>
+<p>分布式消息框架之Kafka</p>
+<p>Kafka发展介绍与对比</p>
+<p>Kafka集群搭建与使用</p>
+<p>Kafka副本机制与选举原理详解</p>
+<p>Kafka架构设计原理分析</p>
+<p>基于Kafka的大规模日志系统实现原理分析</p>
+<p>分布式缓存中间件(Redis，MongoDB，FastDFS)</p>
+<p>关系型数据库瓶颈与优化</p>
+<p>非关系型数据库数据中间件mongoDb、Redis、Tair、Memcache、Neo4j、FastDFS对比</p>
+<p>分布式数据库存储之Redis</p>
+<p>行互联网业使用Redis场景详解与演变过程</p>
+<p>微博与微博Redis使用场景</p>
+<p>电商Redis使用场景</p>
+<p>快速搜索Redis使用场景</p>
+<p>解密Redis基本数据类型、哨兵机制、复制、常用命令</p>
+<p>快速开始Redis Cluster集群与原理</p>
+<p>深入详解集群分配算法详解与动态水平扩容与监控</p>
+<p>深入详解Jedis cluster开发与通讯协议详解</p>
+<p>Redis持久化机制与安全机制详解</p>
+<p>Redis整合lua脚本</p>
+<p>实战企业级项目Redis框架gcache架构与开发</p>
+<p>分布式数据库存储之MongoDB</p>
+<p>MongoDB基础概念</p>
+<p>MongoDB高可用集群搭建实战</p>
+<p>MongoDB最佳实践与使用注意事项</p>
+<p>分布式文件存储之FastDFS</p>
+<p>文件存储实战</p>
+<p>文件同步实战</p>
+<p>文件查询实战</p>
+<p>分布式部署实战</p>
+<p>分布式数据存储(Sharding-Sphere)</p>
+<p>初识分布式下数据库瓶颈</p>
+<p>为何要读写分离、分库分表</p>
+<p>常见分片算法hash、list、range、tag详解</p>
+<p>常见数据库中间件Mycat和Sharding-Jdbc对比</p>
+<p>分布式数据中间件之Sharding-Sphere</p>
+<p>讲最新技术sharding-sphere</p>
+<p>解密Sharding-jdbc核心概念与快速开始</p>
+<p>深入Sharding-jdbc特性详解与模块划分</p>
+<p>实战订单交易中orders和ordersItem分库分表开发</p>
+<p>深入Sharding-jdbc源码之sql解析、sql路由、sql改写、sql执行、结果合并</p>
+<p>Atlas</p>
+<p>深入熟悉Atlas原理与配置搭建</p>
+<p>深入剖析Atlas实战与优缺点</p>
+<p>分布式通信(Netty)</p>
+<p>深入IO与NIO线程模型Reactor模型Netty</p>
+<p>深入netty的线程模型源码分析</p>
+<p>深入高性能序列化协议protobuf及源码分析</p>
+<p>深入粘包分包现象及解决方案、编解码器源码分析</p>
+<p>Netty之Http协议开发应用实践（弹幕系统）</p>
+<p>Netty之WebSocket协议开发应用实践二（贪吃蛇多人联机网游实现）</p>
+<p>分布式搜索引擎(ELK)</p>
+<p>涉及技术点为Elasticsearch、Logstash、Kibana</p>
+<p>ELK集群搭建实践</p>
+<p>ELK架构与原理分析</p>
+<p>Elasticsearch进阶深入浅出</p>
+<p>性能调优专题</p>
+<p>Jvm性能调优</p>
+<p>JVM内存模型</p>
+<p>线程共享区</p>
+<p>堆空间</p>
+<p>生命周期</p>
+<p>分代机制</p>
+<p>常用JVM参数</p>
+<p>方法区(元空间)</p>
+<p>线程私有区</p>
+<p>程序计数器</p>
+<p>线程栈</p>
+<p>栈帧</p>
+<p>局部变量表详解</p>
+<p>操作数栈</p>
+<p>动态链接解析</p>
+<p>方法出口（方法返回地址）</p>
+<p>本地方法栈</p>
+<p>直接内存</p>
+<p>JVM内存管理</p>
+<p>垃圾收集机制详解</p>
+<p>垃圾收集器</p>
+<p>G1收集器</p>
+<p>Serial收集器</p>
+<p>ParNew收集器</p>
+<p>ParallelScavenge收集器</p>
+<p>Serial Old收集器</p>
+<p>CMS(Concurrent Mark Sweep)收集器</p>
+<p>垃圾收集算法</p>
+<p>标记-清除（Mark-Sweep）</p>
+<p>复制算法</p>
+<p>标记-整理</p>
+<p>分代收集</p>
+<p>调优工具详解</p>
+<p>JDK命令</p>
+<p>jps</p>
+<p>jstat</p>
+<p>jinfo</p>
+<p>jmap</p>
+<p>jhat</p>
+<p>jstack</p>
+<p>jconsole详细使用</p>
+<p>jvisualvm详细使用</p>
+<p>JVM类加载机制详解</p>
+<p>类加载器分类</p>
+<p>启动类加载器（Bootstrap ClassLoader）</p>
+<p>扩展类加载器</p>
+<p>应用程序加载器</p>
+<p>双亲委派模型（Parents Delegation Model）</p>
+<p>JVM调优实战</p>
+<p>GC日志详细分析</p>
+<p>gceasy日志分析工具使用</p>
+<p>GCViewer日志分析工具使用</p>
+<p>JVM参数调优分析</p>
+<p>日均百万交易系统JVM堆栈大小设置策略与调优</p>
+<p>亿级流量电商系统堆内年轻代与老年代垃圾回收参数设置与调优</p>
+<p>高并发系统如何基于G1垃圾回收期优化性能</p>
+<p>每秒10万并发的秒杀系统为什么会频繁发生GC</p>
+<p>电商大促活动时，严重Full GC导致系统直接卡死的优化实战</p>
+<p>线上生产系统OOM监控及定位与解决</p>
+<p>Mysql性能调优</p>
+<p>Mysql索引数据结构深度讲解</p>
+<p>B+树</p>
+<p>Hash</p>
+<p>红黑树</p>
+<p>Mysql 执行计划与索引讲解</p>
+<p>explain工具深度使用</p>
+<p>索引优化最佳实践</p>
+<p>Mysql锁机制与事务隔离级别详解</p>
+<p>Mysql锁</p>
+<p>性能</p>
+<p>乐观锁</p>
+<p>悲观锁</p>
+<p>操作</p>
+<p>读锁</p>
+<p>写锁</p>
+<p>粒度</p>
+<p>表锁</p>
+<p>行锁</p>
+<p>死锁以及优化解决</p>
+<p>事务隔离级别</p>
+<p>读未提交</p>
+<p>读已提交</p>
+<p>可重复读</p>
+<p>MVCC机制详解</p>
+<p>串行化</p>
+<p>慢查询Sql调优实战</p>
+<p>Nginx调优</p>
+<p>Nginx快速掌握</p>
+<p>核心模块</p>
+<p>标准Http模块</p>
+<p>可选Http模块</p>
+<p>第三方模块</p>
+<p>nginx 事件驱动模型及特性</p>
+<p>熟练掌握Nginx核心配置</p>
+<p>基本配置</p>
+<p>虚拟主机配置</p>
+<p>upstream</p>
+<p>location</p>
+<p>静态目录配置</p>
+<p>掌握Nginx负载算法配置</p>
+<p>轮循+权重</p>
+<p>ip hash</p>
+<p>url hash</p>
+<p>least_conn</p>
+<p>least_time</p>
+<p>Tomcat调优</p>
+<p>整体认知Tomcat项目架构</p>
+<p>理解Tomat启动流程</p>
+<p>理解对Http请求解析与处理流程</p>
+<p>核心组件认知</p>
+<p>wrapper</p>
+<p>context</p>
+<p>host</p>
+<p>engine</p>
+<p>container</p>
+<p>Tomcat 8 与Tomcat7 对比</p>
+<p>生产环境配置</p>
+<p>Tomcat server.xml 配置详解 </p>
+<p>Tomcat集群与会话复制方案实现</p>
+<p>Tomcat虚拟主机配置</p>
+<p>掌握Tomcat 线程模型背后原理</p>
+<p>Tomcat 支持四种线程模型介绍 </p>
+<p>通过压测演示Nio与 Bio模型的区别</p>
+<p>Tomcat Bio实现源码解读</p>
+<p>Tomcat Nio 实现源码解读</p>
+<p>Tomcat connector 并发参数解读</p>
+<p>微服务系列专题</p>
+<p>微服务架构变迁史</p>
+<p>Spring Boot源码剖析</p>
+<p>Spring boot 快速开始及核心配置详解</p>
+<p>Spring boot 部署方式及热部署详解，Web开发模板引擎Thymeleaf,Freemarker</p>
+<p>Spring Boot集成mybatis，Redis缓存，RabbitMq, 多数据源路由实战及分布式事务处理</p>
+<p>Spring Boot底层源码分析</p>
+<p>Spring Boot启动过程源码分析</p>
+<p>Spring Boot自动装配源码分析</p>
+<p>Spring Cloud Netflix源码剖析</p>
+<p>eureka服务注册与发现详解及源码分析</p>
+<p>ribbon 客户端负载均衡详解及源码分析</p>
+<p>fegin 声明式服务调用详解及源码分析</p>
+<p>hystrix实现服务限流，降级，熔断详解及源码分析</p>
+<p>hystrix实现自定义接口降级,监控数据及监控数据聚合</p>
+<p>Zuul/Gateway统一网关详解，服务路由，过滤器使用及源码分析</p>
+<p>分布式配置中心Config详解</p>
+<p>分布式链路跟踪Sleuth详解</p>
+<p>Zuul 应用之统一异常处理，Cookie和重定向处理</p>
+<p>Spring Cloud Alibaba源码剖析</p>
+<p>Nacos服务注册与发现详解及源码分析</p>
+<p>Sentinel限流，降级详解及底层源码剖析</p>
+<p>虚拟容器</p>
+<p>虚拟服务之Docker</p>
+<p>Docker的镜像，仓库，容器详解</p>
+<p>快速开始搭建Docker环境</p>
+<p>DockerFile使用详解</p>
+<p>DockerCompose集成式应用组合</p>
+<p>Docker服务编排实现</p>
+<p>Kubernetes容器管理</p>
+<p>Kubernetes介绍与快速开始</p>
+<p>Kubernetes生产集群环境搭建与使用</p>
+<p>项目实战专题</p>
+<p>双十一电商平台</p>
+<p>项目介绍及部署</p>
+<p>解密电商项目架构设计讲解、设计技术点等</p>
+<p>解密项目部署与讲解</p>
+<p>微服务架构拆分</p>
+<p>会员系统</p>
+<p>详解电商平台会员模块介绍、配置详解</p>
+<p>详解电商平台会员业务与技术实现</p>
+<p>解密电商平台SSO单点跨域详解</p>
+<p>解密电商平台会员数据库分库分表</p>
+<p>商品系统</p>
+<p>详解电商平台商品模块介绍、配置详解</p>
+<p>详解电商平台商品模块业务与技术实现</p>
+<p>解密电商平台商品详细页静态化与缓存</p>
+<p>订单系统</p>
+<p>详解电商平台订单模块介绍、配置详解</p>
+<p>详解电商平台订单业务与技术实现</p>
+<p>解密订单分布式事务、幂等性、重复问题</p>
+<p>秒杀库存分布式锁实战</p>
+<p>后台系统</p>
+<p>详解后台模块介绍、配置详解</p>
+<p>设计后台系统权限、资源、账号、权限关系与技术实现</p>
+<p>电商平台技术解决方案</p>
+<p>分布式解决方案</p>
+<p>分布式锁</p>
+<p>Mysql实现</p>
+<p>Redis实现</p>
+<p>Zookeeper实现</p>
+<p>分布式事务</p>
+<p>2PC/3PC</p>
+<p>Atomic框架</p>
+<p>消息队列</p>
+<p>Rabbitmq</p>
+<p>Rocketmq</p>
+<p>TCC</p>
+<p>Tcc-transaction框架</p>
+<p>Bytetcc框架</p>
+<p>LCN</p>
+<p>TX-LCN框架</p>
+<p>分布式调度中心</p>
+<p>Quartz框架</p>
+<p>xxl-job框架</p>
+<p>TBSchedule框架</p>
+<p>分布式配置中心</p>
+<p>Zuul框架</p>
+<p>Disconf框架</p>
+<p>Apollo框架</p>
+<p>分布式全局序列号</p>
+<p>雪花算法</p>
+<p>Redis实现</p>
+<p>分布式Session</p>
+<p>Spring Session实现</p>
+<p>海量数据分库分表实现</p>
+<p>ShardingSphere实战</p>
+<p>高并发秒杀系统实现</p>
+<p>Redis与JVM多级缓存架构</p>
+<p>消息中间件流量削峰与异步处理</p>
+<p>限流策略实现</p>
+<p>Nginx限流</p>
+<p>计数器 </p>
+<p>滑动时间窗口 </p>
+<p>令牌桶、漏桶算法 </p>
+<p>Hystrix限流</p>
+<p>大促高峰服务降级实现</p>
+<p>系统安全防刷策略实现</p>
+<p>性能调优实战</p>
+<p>高并发场景JVM GC调优实战</p>
+<p>高并发场景Mysql调优实战</p>
+<p>高并发场景Tomcat调优实战</p>
+<p>高并发场景Nginx调优实战</p>
+<p>多级缓存架构</p>
+<p>亿级流量商品详情页Openresty多级缓存架构方案实战</p>
+<p>商品详细页缓存击穿重现与解决方式</p>
+<p>分布式调用链平台</p>
+<p>分布示调用链简介与发展史</p>
+<p>调用链平台概要设计</p>
+<p>Javassist、字节码插桩、JavaAGENT</p>
+<p>埋点采集</p>
+<p>采集点为：Dubbo、Jdbc Driver、Spring</p>
+<p>采集点为：Tomcat、Http、Redis</p>
+<p>Classloader深入加载机制</p>
+<p>深入分析调用链中Threadlocal、Threadpool应用</p>
+<p>分布式环境部署与问题排查</p>
+<p>互联网工程专题</p>
+<p>Git</p>
+<p>整体认知GIT体系结构</p>
+<p>了解Git在互联网公司的应用状况</p>
+<p>了解Git特性及其与SVN的区别</p>
+<p>动手搭建Git客户端与服务端</p>
+<p>基于linux 搭建Git服务</p>
+<p>基于ssh 开放git 服务</p>
+<p>掌握git 客户端的基本使用</p>
+<p>掌握Git的核心命令</p>
+<p>本地仓库</p>
+<p>新建与远程克隆git项目</p>
+<p>add 与 commit 文件</p>
+<p>远程仓库</p>
+<p>掌握本地创仓库与、远程仓库及中心仓库的概念</p>
+<p>远程仓库添加及状态查看</p>
+<p>分支管理&amp;标签</p>
+<p>分支创建、回滚、合并</p>
+<p>分支冲突解决</p>
+<p>分支状态与commit 记录</p>
+<p>掌握标签的正确使用</p>
+<p>Git企业应用经验</p>
+<p>git web服务器搭建与使用</p>
+<p>gogs 安装</p>
+<p>gogs 自动备份与恢复</p>
+<p>gogs 迁移</p>
+<p>gogs 核心操作</p>
+<p>gogs Bug踩坑经验</p>
+<p>企业版本迭代分支管理经验</p>
+<p>日常高频率迭代分支管理办法</p>
+<p>紧急上线分支管理办法</p>
+<p>日常普通迭代分支管理办法</p>
+<p>Maven</p>
+<p>整体认知maven的体系结构</p>
+<p>理解Maven的架构思路</p>
+<p>了解Maven内部运作原理</p>
+<p>Maven生命周期理解</p>
+<p>Maven插件体系理解</p>
+<p>掌握maven核心命令</p>
+<p>clean</p>
+<p>compile</p>
+<p>test</p>
+<p>package</p>
+<p>install</p>
+<p>deploy</p>
+<p>掌握maven的pom配置体系</p>
+<p>模块配置</p>
+<p>属性配置</p>
+<p>依懒配置</p>
+<p>构件配置</p>
+<p>插件配置</p>
+<p>在公司搭建Nexus私服</p>
+<p>理解maven 私服输在可持续集成当中的作用</p>
+<p>动手搭建nexus私服</p>
+<p>nexus仓库管理</p>
+<p>Jenkins</p>
+<p>理解可持续集成概念</p>
+<p>详解持续集成</p>
+<p>详解持续交互</p>
+<p>详解持续部署</p>
+<p>整体认知jenkins</p>
+<p>详解jenkins Pipeline体系</p>
+<p>详解jenkins</p>
+<p>动手搭建jenkins</p>
+<p>jenkins</p>
+<p>构建环境配置</p>
+<p>配置自动部署</p>
+<p>远程仓库推送</p>
+<p>自动触发构建</p>
+<p>Jenkins插件体系</p>
+<p>常用插件安装与使用</p>
+<p>插件开发</p>
+<p>Linux</p>
+<p>linux原理、启动、目录介绍</p>
+<p>linux运维常用命令</p>
+<p>linux用户与权限介绍 </p>
+<p>shell脚本编写</p>
+<p>拓展技术专题</p>
+<p>开拓技术视野，提高面试竞争力</p>
+<p>面试专题</p>
+<p>360度规划您的职业生涯</p>
+<p>360度讲解面试中常见问题、礼仪、细节、技巧</p>
+<p>程序员修炼之道之简历技术优化、项目优化</p>
+<p>精讲常见BAT面试题目&amp;offer选择</p>
+<p>人工智能技术</p>
+<p>用一台电脑搭建一个机器人开发环境</p>
+<p>Python编程入门和应用范例</p>
+<p>ROS客户端库和应用范例</p>
+<p>开发你的第一个机器人应用</p>
+<p>如何协调一个机器人内部的行为</p>
+<p>计算机视觉基础与应用</p>
+<p>机器人建图和导航</p>
+<p>开发一个智能安保机器人</p>
+<p>神经网络基础与应用</p>
+<p>基于ROS开发多机器人应用</p>
+<p>群体智能</p>
+<p>人工智能前沿探讨 类脑计算</p>
+<p>人工智能前沿探讨深度强化学习（DRL）</p>
+<p>区块链技术</p>
+<p>项目架构与技术点讲解</p>
+<p>区块链原理整体介绍</p>
+<p>区块链整体结构设计与实现</p>
+<p>共识机制</p>
+<p>– 工作量证明原理</p>
+<p>– 挖矿算法</p>
+<p>密码学</p>
+<p>对称加密</p>
+<p>哈希(hash)加密</p>
+<p>非对称加密</p>
+<p>数字签名</p>
+<p>比特币钱包的设计与实现</p>
+<p>钱包结构</p>
+<p>钱包转账</p>
+<p>钱包余额</p>
+<p>比特币交易的设计与实现</p>
+<p>比特币交易UTXO</p>
+<p>比特币余额</p>
+<p>P2P去中心化网络设计与实现</p>
+<p>区块链P2P网络</p>
+<p>网络节点发现</p>
+<p>网络节点通讯</p>
+<p>区块广播</p>
+<p>交易广播</p>
+<p>课程详细内容请咨询图灵学院诸葛老师，QQ：3376224996</p>
+<p>大数据技术</p>
+<p>第一阶段–开发环境构建</p>
+<p>CentOS7 操作系统介绍</p>
+<p>intellij idea及插件介绍</p>
+<p>版本控制软件使用</p>
+<p>第二阶段–HADOOP核心</p>
+<p>Hadoop概述</p>
+<p>Hadoop资源调度框架Yarn介绍</p>
+<p>分布式文件系统HDFS</p>
+<p>分布式框架MapReduce</p>
+<p>第三阶段–大数据通用生态圈组件</p>
+<p>数据采集器</p>
+<p>数据仓库与OLAP</p>
+<p>NoSql数据库</p>
+<p>Zookeeper与分布式一致性算法</p>
+<p>中间件</p>
+<p>第四阶段–Spark及生态圈</p>
+<p>Spark核心</p>
+<p>SparkSQL</p>
+<p>实时计算</p>
+<p>第五阶段–基于spark的数据挖掘算法</p>
+<p>协同滤波实现推荐系统</p>
+<p>Spark下的聚类与分类算法</p>
+<p>Spark下的图计算</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-08-20T09:25:13.388Z" itemprop="dateUpdated">2019-08-20 17:25:13</time>
+</span><br>
+
+
+        
+    </div>
+    
+    <footer>
+        <a href="https://blog.wweiwei.me">
+            <img src="/img/avatar.jpg" alt="魏巍">
+            魏巍
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/架构师/">架构师</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/f01f372a/&title=《Java架构师学习路线》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/f01f372a/&title=《Java架构师学习路线》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/f01f372a/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Java架构师学习路线》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/f01f372a/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/f01f372a/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/3e0c57de/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">MQ重复消费</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/872c471f/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Spring是什么</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="bottom">
+        <p><span> &copy; 2019 Wei Wei. All rights reserved.</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/f01f372a/&title=《Java架构师学习路线》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/f01f372a/&title=《Java架构师学习路线》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/f01f372a/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Java架构师学习路线》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/f01f372a/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/f01f372a/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://blog.wweiwei.me/posts/f01f372a/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '正在加载';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '加载好了';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

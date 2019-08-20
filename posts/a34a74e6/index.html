@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>ACID与CAP | 魏巍的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content>
+    <meta name="description" content="至于这里为什么把ACID和CAP放在一起总结，是因为接触开发的时间越长，我越来越觉得逻辑处理和数据库是一个不可分割的整体，特别在实际业务中事务控制从数据层到业务层的上移，更让我觉得两者是一个很相似的东西，只不过我们针对不同开发需求各取所长，约定了模块开发的规则。 在日常开发中，我们通常的重心是放在业务上，因为实现上Java的mybatis，Jpa或者Node的Sequelize已经帮我们解决这个问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ACID与CAP">
+<meta property="og:url" content="https://blog.wweiwei.me/posts/a34a74e6/index.html">
+<meta property="og:site_name" content="魏巍的博客">
+<meta property="og:description" content="至于这里为什么把ACID和CAP放在一起总结，是因为接触开发的时间越长，我越来越觉得逻辑处理和数据库是一个不可分割的整体，特别在实际业务中事务控制从数据层到业务层的上移，更让我觉得两者是一个很相似的东西，只不过我们针对不同开发需求各取所长，约定了模块开发的规则。 在日常开发中，我们通常的重心是放在业务上，因为实现上Java的mybatis，Jpa或者Node的Sequelize已经帮我们解决这个问">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-07-16T07:17:38.648Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ACID与CAP">
+<meta name="twitter:description" content="至于这里为什么把ACID和CAP放在一起总结，是因为接触开发的时间越长，我越来越觉得逻辑处理和数据库是一个不可分割的整体，特别在实际业务中事务控制从数据层到业务层的上移，更让我觉得两者是一个很相似的东西，只不过我们针对不同开发需求各取所长，约定了模块开发的规则。 在日常开发中，我们通常的重心是放在业务上，因为实现上Java的mybatis，Jpa或者Node的Sequelize已经帮我们解决这个问">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">魏巍</h5>
+          <a href="mailto:weiwei@njbandou.com" title="weiwei@njbandou.com" class="mail">weiwei@njbandou.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/lokeywei" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">ACID与CAP</div>
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">ACID与CAP</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-04-12T08:26:47.000Z" itemprop="datePublished" class="page-time">
+  2019-04-12
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/数据库/">数据库</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#ACID"><span class="post-toc-number">1.</span> <span class="post-toc-text">ACID</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#CAP"><span class="post-toc-number">2.</span> <span class="post-toc-text">CAP</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-ACID与CAP" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">ACID与CAP</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-04-12 16:26:47" datetime="2019-04-12T08:26:47.000Z" itemprop="datePublished">2019-04-12</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/数据库/">数据库</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>至于这里为什么把ACID和CAP放在一起总结，是因为接触开发的时间越长，我越来越觉得逻辑处理和数据库是一个不可分割的整体，特别在实际业务中事务控制从数据层到业务层的上移，更让我觉得两者是一个很相似的东西，只不过我们针对不同开发需求各取所长，约定了模块开发的规则。</p>
+<p>在日常开发中，我们通常的重心是放在业务上，因为实现上Java的mybatis，Jpa或者Node的Sequelize已经帮我们解决这个问题，我们只要声明式地调用方法就可以实现sql语句的功能。</p>
+<p>那么我们应该怎么描述一个数据库，是mysql还是oracle，是sqlserver还是mongdb，是索引还是B树？</p>
+<h2 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h2><p>传统的关系型数据都必须要遵循ACID原则，但是在介绍ACID之前必须了解事务的概念。</p>
+<p>什么是事务？在我们日常工作中肯定听过这个概念，再不济在使用Jpa的时候涉及到update操作也会强制让你加一个@Translation在你的业务层上。那么怎么来描述一个事务？一组连续的操作，比如生成订单和减库存、消费和账户扣费，这种操作如果缺少其中一步就会造成逻辑的混乱。</p>
+<p>那么ACID和事务有什么关系？</p>
+<p><strong>Atomicity</strong> 原子性 事务的原子性，事务中的任何操作都是不可分割的。</p>
+<p><strong>Consistency</strong> 一致性 数据库数据必须始终保持一致性，比如总库存数量必须时刻等于有效订单数量加上剩余库存。</p>
+<p><strong>Isolation</strong> 独立性 事务的独立性，事务执行过程中互相不影响。</p>
+<p><strong>Durability</strong> 持久性 数据保存在外存也就是我们常说的硬盘上，计算机断电也不会丢失数据。</p>
+<p>拿实际项目来举例，有一个实时订单项目使用mysql的innodb引擎，这里我们没有使用内存缓存数据，生成订单时要随机分配一个座位。现在我们给生成订单的Service加上事务@Translation，再给查询座位和锁定加上原子操作符保证万无一失，当然这一步也可以通过行锁来完成。最后我们使用jmeter对接口进行1秒1000次的压力测试，结果却是每个座位分配了两次。为什么会出现这种情况？</p>
+<p>尽管我们给查询和锁定加上了原子操作符，但是mysql innodb引擎的默认隔离级别是<strong>读已提交</strong>，事务执行过程中读取不到其他事务的修改。我们把注解改成@Translation(isolation = READ_UNCOMMITTED)后在进行1000次并发测试，果然每个座位只分配了一次。但是这样操作就破坏事务的独立性，一个事务的执行依赖于和它同时执行的事务的结果，如果其他事务执行失败进行了回滚，那么当前事务获取到的值就是一个脏数据。那么我们还要不要保证事务的一致性？</p>
+<p>在Java并发编程中提到如果多个线程修改同一个数据的时候，就会形成Read-Then-Modify竞态条件，如果线程修改数据时没有通知其他线程就会引起并发问题，这里的通知其他线程显然破坏了事务的隔离性。尤其我们在设计高并发系统时，通常会通过负载均衡将请求压力分散到多个后端服务上。在这种情况下，我们还应该遵循ACID原则么？</p>
+<p>这里说一句题外话，软件的发展总是受硬件制约，也就是物质形态的硬件决定着意识形态的软件发展。为什么我们要做分布式系统，为什么云原生技术现在越来越受关注？因为我们要处理请求需要消耗的资源远远超过一台常用的服务器拥有的资源，就算是8核16G的服务器在动辄十万百万的并发下也显然很无力。</p>
+<h2 id="CAP"><a href="#CAP" class="headerlink" title="CAP"></a>CAP</h2><p>CAP是分布式系统的基本定理。</p>
+<p><strong>Consistency</strong> 数据一致性，不同分区的数据必须一直保持一致。</p>
+<p><strong>Availability</strong> 系统可用性。</p>
+<p><strong>Partition tolerance</strong> 分隔容忍，不同分区允许通信失败的情况。</p>
+<p>这三种特性无法同时满足，显然数据一致性和分隔容忍是互相矛盾的，通常我们只要求数据的最终一致性，来保证系统的可用性和分隔容忍。</p>
+<p>比如，在一些大秒系统中，我们通常会将静态的页面数据甚至库存也放在缓存当中，只在订单下单时才去数据库校验库存。由于内存可以随机高速存储，这样就可以保证服务在大流量的情况下是可用，而在订单生成时校验库存则保证了数据的一致性，这样的倒三角结构可以支撑起整个秒杀业务，且不会出现超卖的情况。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-16T07:17:38.648Z" itemprop="dateUpdated">2019-07-16 15:17:38</time>
+</span><br>
+
+
+        
+    </div>
+    
+    <footer>
+        <a href="https://blog.wweiwei.me">
+            <img src="/img/avatar.jpg" alt="魏巍">
+            魏巍
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/a34a74e6/&title=《ACID与CAP》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/a34a74e6/&title=《ACID与CAP》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/a34a74e6/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《ACID与CAP》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/a34a74e6/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/a34a74e6/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/872c471f/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Spring是什么</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/6331d382/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">数据库连接池</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="bottom">
+        <p><span> &copy; 2019 Wei Wei. All rights reserved.</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/a34a74e6/&title=《ACID与CAP》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/a34a74e6/&title=《ACID与CAP》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/a34a74e6/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《ACID与CAP》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/a34a74e6/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/a34a74e6/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://blog.wweiwei.me/posts/a34a74e6/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '正在加载';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '加载好了';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

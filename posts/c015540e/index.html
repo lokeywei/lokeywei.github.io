@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Flink初体验 | 魏巍的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Flink">
+    <meta name="description" content="准备工作在maven项目中集成Flink并不困难，只需要将maven依赖添加到pom文件当中就可以在java代码中执行相关的操作。12345&amp;lt;dependency&amp;gt;        &amp;lt;groupId&amp;gt;org.apache.flink&amp;lt;/groupId&amp;gt;        &amp;lt;artifactId&amp;gt;flink-clients_2.11&amp;lt;/artifact">
+<meta name="keywords" content="Flink">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flink初体验">
+<meta property="og:url" content="https://blog.wweiwei.me/posts/c015540e/index.html">
+<meta property="og:site_name" content="魏巍的博客">
+<meta property="og:description" content="准备工作在maven项目中集成Flink并不困难，只需要将maven依赖添加到pom文件当中就可以在java代码中执行相关的操作。12345&amp;lt;dependency&amp;gt;        &amp;lt;groupId&amp;gt;org.apache.flink&amp;lt;/groupId&amp;gt;        &amp;lt;artifactId&amp;gt;flink-clients_2.11&amp;lt;/artifact">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-07-11T08:23:25.870Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flink初体验">
+<meta name="twitter:description" content="准备工作在maven项目中集成Flink并不困难，只需要将maven依赖添加到pom文件当中就可以在java代码中执行相关的操作。12345&amp;lt;dependency&amp;gt;        &amp;lt;groupId&amp;gt;org.apache.flink&amp;lt;/groupId&amp;gt;        &amp;lt;artifactId&amp;gt;flink-clients_2.11&amp;lt;/artifact">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">魏巍</h5>
+          <a href="mailto:weiwei@njbandou.com" title="weiwei@njbandou.com" class="mail">weiwei@njbandou.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/lokeywei" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Flink初体验</div>
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Flink初体验</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-08T09:30:30.000Z" itemprop="datePublished" class="page-time">
+  2019-03-08
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/大数据/">大数据</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#准备工作"><span class="post-toc-number">1.</span> <span class="post-toc-text">准备工作</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#第一个Demo-电影类型分析（csv文件批处理）"><span class="post-toc-number">2.</span> <span class="post-toc-text">第一个Demo-电影类型分析（csv文件批处理）</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#第二个Demo-维基百科用户在规定时间内添加和删除的字节数（数据流的处理）"><span class="post-toc-number">3.</span> <span class="post-toc-text">第二个Demo-维基百科用户在规定时间内添加和删除的字节数（数据流的处理）</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Flink初体验" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Flink初体验</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-08 17:30:30" datetime="2019-03-08T09:30:30.000Z" itemprop="datePublished">2019-03-08</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/大数据/">大数据</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>在maven项目中集成Flink并不困难，只需要将maven依赖添加到pom文件当中就可以在java代码中执行相关的操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;org.apache.flink&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;flink-clients_2.11&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;1.6.4&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<h2 id="第一个Demo-电影类型分析（csv文件批处理）"><a href="#第一个Demo-电影类型分析（csv文件批处理）" class="headerlink" title="第一个Demo-电影类型分析（csv文件批处理）"></a>第一个Demo-电影类型分析（csv文件批处理）</h2><p>一个完整的Flink分析函数应该具备以下几个部分，环境获取，数据源，筛选，转换，输出。</p>
+<p><strong>环境获取</strong></p>
+<p>无论你的Flink环境是在本地还是线上，甚至只是简单的单元测试，你都需要在代码的开头定义一个环境变量。如果你的代码需要发布调用getXXXXEnvironment(),如果你只是想在本地测试一下代码的逻辑createXXXXEnvironment()会在JVM里新建一个Flink环境。</p>
+<p><strong>数据源</strong></p>
+<p>Flink支持多种数据源的分析，因为它设计了一个统一的DataSet类型来处理所有的数据。另外多元组TupleX的泛型设计也能很好地支持各种数据结构。例如，Tuple3就是一个三元组可以存储三个不同的字段。这样的设计使我们可以用通用的类型去接收大多数类型的数据。</p>
+<p><strong>筛选</strong></p>
+<p>不同的文件格式以及海量的数据意味着不同的格式筛选方式，Flink提供了一些筛选函数如忽略首行，忽略无效行等函数来进行数据的初步格式筛选。另外，我们还可以通过filter(),flatMap()函数进行逻辑筛选。</p>
+<p><strong>转换</strong></p>
+<p>为了方便函数的处理以及输出，我们通常会将多元组转换成POJO类型，方便我们利用JAVA的一些特性（比如重写toString方法格式化输出）去完成数据处理工作。</p>
+<p><strong>输出</strong></p>
+<p>任何一个数据处理流程都需要一个输出，哪怕只是一个简单的控制台输出print()。</p>
+<p>好了接下来，我们开始代码的部分：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) throws Exception&#123;</span><br><span class="line">      //当函数运行在main方法中需要显示创建一个运行环境 </span><br><span class="line">      ExecutionEnvironment env = ExecutionEnvironment.createCollectionsEnvironment();</span><br><span class="line">      //Step1 设置数据源</span><br><span class="line">      //创建三元组 Tuple 接收数据 可以通过DataSet操作所有数据类型</span><br><span class="line">      DataSet&lt;Tuple3&lt;Long, String, String&gt;&gt; lines =</span><br><span class="line">           env.readCsvFile(&quot;/Users/lokey/moveBeans/BigData/data/movies.csv&quot;) //从movies.csv读取数据 数据类型为 movieId title genres</span><br><span class="line">              .ignoreFirstLine() //忽略首行</span><br><span class="line">              .parseQuotedStrings(&apos;&quot;&apos;) //定义字符串引号类型</span><br><span class="line">              .ignoreInvalidLines() //忽略无效行</span><br><span class="line">              .types(Long.class, String.class, String.class); //定义数据类型 int String String</span><br><span class="line">      //Step2 转换</span><br><span class="line">      //三元组转POJO集合</span><br><span class="line">      DataSet&lt;Movie&gt; movies = lines.map(csvLine -&gt;</span><br><span class="line">                      new Movie(csvLine.f1, new HashSet&lt;String&gt;(Arrays.asList(csvLine.f2.split(&quot;\\|&quot;)))));</span><br><span class="line">      //筛选动作类电影</span><br><span class="line">      DataSet&lt;Movie&gt; filteredMovies = movies.filter(movie -&gt; movie.getGenres().contains(&quot;Action&quot;));</span><br><span class="line">      //Step3输出</span><br><span class="line">      filteredMovies.print();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>关于代码</strong></p>
+<p>以上代码就是一个完整的数据处理流程，只是做了一个简单的筛选操作，从csv文件中读取电影的信息，筛选出动作片打印在控制台上。但是实际上我们在处理数据时往往带着许多复杂的条件，例如，统计用户在30分钟之内的登录数，根据地域统计不同类型商品的商品售卖数量，这些多条件的筛选需要我们运用复杂的筛选函数，比如window机制进行数据的分段或者key函数进行数据的分组，我们会在第二个例子中进行介绍。</p>
+<h2 id="第二个Demo-维基百科用户在规定时间内添加和删除的字节数（数据流的处理）"><a href="#第二个Demo-维基百科用户在规定时间内添加和删除的字节数（数据流的处理）" class="headerlink" title="第二个Demo-维基百科用户在规定时间内添加和删除的字节数（数据流的处理）"></a>第二个Demo-维基百科用户在规定时间内添加和删除的字节数（数据流的处理）</h2><p>首先引入维基百科的依赖<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">      &lt;groupId&gt;org.apache.flink&lt;/groupId&gt;</span><br><span class="line">      &lt;artifactId&gt;flink-connector-wikiedits_2.11&lt;/artifactId&gt;</span><br><span class="line">      &lt;version&gt;1.6.4&lt;/version&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br></pre></td></tr></table></figure></p>
+<p>接下来的是代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) throws Exception&#123;</span><br><span class="line">    //新建流处理环境</span><br><span class="line">    StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironment();</span><br><span class="line">    //添加数据源</span><br><span class="line">    DataStream&lt;WikipediaEditEvent&gt; edits = env.addSource(new WikipediaEditsSource());</span><br><span class="line">    //根据用户名分组</span><br><span class="line">    KeyedStream&lt;WikipediaEditEvent, String&gt; keyedEdits = edits.keyBy(event -&gt; event.getUser());</span><br><span class="line">    //统计五秒内每个用户修改的字节数，将时间窗口内的数据转换二元组列表（用户，字节数）</span><br><span class="line">    DataStream&lt;Tuple2&lt;String, Long&gt;&gt; result = keyedEdits</span><br><span class="line">            .timeWindow(Time.seconds(5))</span><br><span class="line">            .fold(new Tuple2&lt;&gt;(&quot;&quot;, 0L),new FoldFunction&lt;WikipediaEditEvent, Tuple2&lt;String, Long&gt;&gt;() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public Tuple2&lt;String, Long&gt; fold(Tuple2&lt;String, Long&gt; acc, WikipediaEditEvent event) &#123;</span><br><span class="line">                    acc.f0 = event.getUser();</span><br><span class="line">                    acc.f1 += event.getByteDiff();</span><br><span class="line">                    return acc;</span><br><span class="line">                &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">    result.print();</span><br><span class="line">    env.execute();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接下来我们逐条分析<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">KeyedStream&lt;WikipediaEditEvent, String&gt; keyedEdits = edits</span><br><span class="line">        .keyBy(event -&gt; event.getUser());</span><br></pre></td></tr></table></figure></p>
+<p>keyBy（event -&gt; event.getUser()）将维基百科的用户行为模型根据用户名进行分组，并且得到一个包括行为模型和分组去重后用户名的KeyedStream。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">DataStream&lt;Tuple2&lt;String, Long&gt;&gt; result = keyedEdits</span><br><span class="line">            .timeWindow(Time.seconds(5))</span><br><span class="line">            .fold(new Tuple2&lt;&gt;(&quot;&quot;, 0L),new FoldFunction&lt;WikipediaEditEvent, Tuple2&lt;String, Long&gt;&gt;() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public Tuple2&lt;String, Long&gt; fold(Tuple2&lt;String, Long&gt; acc, WikipediaEditEvent event) &#123;</span><br><span class="line">                    acc.f0 = event.getUser();</span><br><span class="line">                    acc.f1 += event.getByteDiff();</span><br><span class="line">                    return acc;</span><br><span class="line">                &#125;</span><br><span class="line">                &#125;);</span><br></pre></td></tr></table></figure></p>
+<p>在处理流数据时，我们必须调用window函数将数据流切成一个一个的窗口，以上代码将KeyedStream再次处理成每五秒一个窗口。当在一个无边界的流中进行聚合计算的候，必须要指定一个window时间窗口。fold函数会根据不同的key值进行转换运行，以上的代码中fold转换算子根据不同的用户名统计出当前窗口的用户修改删除字符数，并且生成新的&lt;用户名，字符数&gt;二元组数据流。KeyedStream执行完任何一次转换操作后就会变回DataStream。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">result.print();</span><br><span class="line">env.execute();</span><br></pre></td></tr></table></figure></p>
+<p>那么，我们可以猜测出输出的结果应该是以5秒为一个周期的二元组列表。当我们运行execute（）函数时，代码才会在我们的flink环境中执行。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上面的两个简单的例子只是粗浅地介绍了flink数据处理流程，flink的学习才只是一个开端。通过在网上查阅资料我发现在常见的应用中，大多数的案例将kafka消息队列作为输入源头，在这里记录一下，后面可能会学习一下kafka的基础知识。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-11T08:23:25.870Z" itemprop="dateUpdated">2019-07-11 16:23:25</time>
+</span><br>
+
+
+        
+    </div>
+    
+    <footer>
+        <a href="https://blog.wweiwei.me">
+            <img src="/img/avatar.jpg" alt="魏巍">
+            魏巍
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/">Flink</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/c015540e/&title=《Flink初体验》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/c015540e/&title=《Flink初体验》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/c015540e/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Flink初体验》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/c015540e/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/c015540e/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/348cf105/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Flink高可用部署</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/c26dc0d6/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">写在大数据学习开始的话</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="bottom">
+        <p><span> &copy; 2019 Wei Wei. All rights reserved.</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/c015540e/&title=《Flink初体验》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/c015540e/&title=《Flink初体验》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/c015540e/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Flink初体验》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/c015540e/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/c015540e/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://blog.wweiwei.me/posts/c015540e/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '正在加载';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '加载好了';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

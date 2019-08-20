@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>数据库索引与规范 | 魏巍的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="mysql,数据结构">
+    <meta name="description" content="关于数据库，我们最常提到一个词就是优化，比如优化存储数据结构，优化查询语句。那么如何去做数据库的优化？我想首先我们要了解数据库到底是如何存储，查找和更新数据的。由于不同数据库不同的存储引擎的区别，这里主要以mysql为例。众所周知，存储引擎是数据库的表的属性，因此同一个数据库可以根据不同的需求应用不同的存储引擎。 数据库的优化说到底就是一个字快，存储快，更新快，删除快，而据我们所知，不同的数据结构">
+<meta name="keywords" content="mysql,数据结构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库索引与规范">
+<meta property="og:url" content="https://blog.wweiwei.me/posts/7797fb59/index.html">
+<meta property="og:site_name" content="魏巍的博客">
+<meta property="og:description" content="关于数据库，我们最常提到一个词就是优化，比如优化存储数据结构，优化查询语句。那么如何去做数据库的优化？我想首先我们要了解数据库到底是如何存储，查找和更新数据的。由于不同数据库不同的存储引擎的区别，这里主要以mysql为例。众所周知，存储引擎是数据库的表的属性，因此同一个数据库可以根据不同的需求应用不同的存储引擎。 数据库的优化说到底就是一个字快，存储快，更新快，删除快，而据我们所知，不同的数据结构">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H3992008035604ee3b710ee0804834f2cf.png">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/Ha15df6633cea4b8c9d0243507287cc289.png">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H59982f931dcb4ca8afc1919474fb74856.png">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/Hc9b87ca8acbd4848a54b2235a9415249y.png">
+<meta property="og:updated_time" content="2019-08-20T09:25:13.387Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据库索引与规范">
+<meta name="twitter:description" content="关于数据库，我们最常提到一个词就是优化，比如优化存储数据结构，优化查询语句。那么如何去做数据库的优化？我想首先我们要了解数据库到底是如何存储，查找和更新数据的。由于不同数据库不同的存储引擎的区别，这里主要以mysql为例。众所周知，存储引擎是数据库的表的属性，因此同一个数据库可以根据不同的需求应用不同的存储引擎。 数据库的优化说到底就是一个字快，存储快，更新快，删除快，而据我们所知，不同的数据结构">
+<meta name="twitter:image" content="https://ae01.alicdn.com/kf/H3992008035604ee3b710ee0804834f2cf.png">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">魏巍</h5>
+          <a href="mailto:weiwei@njbandou.com" title="weiwei@njbandou.com" class="mail">weiwei@njbandou.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/lokeywei" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">数据库索引与规范</div>
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">数据库索引与规范</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-08-12T01:30:30.000Z" itemprop="datePublished" class="page-time">
+  2019-08-12
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/数据库/">数据库</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#索引"><span class="post-toc-number">1.</span> <span class="post-toc-text">索引</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#数组"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">数组</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#链表"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">链表</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#HashMap"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">HashMap</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二叉查找树"><span class="post-toc-number">1.4.</span> <span class="post-toc-text">二叉查找树</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#红黑树"><span class="post-toc-number">1.5.</span> <span class="post-toc-text">红黑树</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#B树"><span class="post-toc-number">1.6.</span> <span class="post-toc-text">B树</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#B-树"><span class="post-toc-number">1.7.</span> <span class="post-toc-text">B+树</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#规范"><span class="post-toc-number">2.</span> <span class="post-toc-text">规范</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-mysql索引" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">数据库索引与规范</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-08-12 09:30:30" datetime="2019-08-12T01:30:30.000Z" itemprop="datePublished">2019-08-12</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/数据库/">数据库</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>关于数据库，我们最常提到一个词就是优化，比如优化存储数据结构，优化查询语句。那么如何去做数据库的优化？我想首先我们要了解数据库到底是如何存储，查找和更新数据的。由于不同数据库不同的存储引擎的区别，这里主要以mysql为例。众所周知，存储引擎是数据库的表的属性，因此同一个数据库可以根据不同的需求应用不同的存储引擎。</p>
+<p>数据库的优化说到底就是一个字快，存储快，更新快，删除快，而据我们所知，不同的数据结构在查找和更新上各有优缺点，那么mysql数据库到底是如何存储数据的呢？简单粗暴地打开mysql安装路径下的data文件，结果很清晰的就显示在我们眼前。</p>
+<ul>
+<li><p>MyISAM</p>
+<p>.MYI 索引存储文件</p>
+<p>.MYD 数据文件</p>
+<p>我们一眼就可以看出，Myisam的索引和数据是分开存储的，那么显然每一个索引里存的只有数据的索引值和索引的地址。</p>
+</li>
+<li><p>InnoDB</p>
+<p>.ibd 数据文件</p>
+<p>而InnoDB的数据和索引都在同一个文件之中，数据就按照索引的结构存储。</p>
+</li>
+</ul>
+<p>除了以上几种文件以外，还有.frm文件用来存储表的结构信息。可以看出来，不管是InnoDB还是MyISAM引擎，决定数据库效率的关键都在索引上，现在我们再回过头来想一想，什么样的数据结构才能方便我们去查找和更新数据。</p>
+<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><p>当我们从我的电脑某某地方找到mysql数据存储文件的时候时候，就说明了数据时是存储在磁盘上的，我们都知道电脑把数据从磁盘读取到内存要进行一次磁盘IO。尽管mysql自身一定也做了一些缓存或者缓冲池来提高数据库的效率，但是通常来说磁盘IO会是整个数据库操作的瓶颈。接下来，让我们用几种不同的数据结构来分析下各自查询的效率。</p>
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><p>首先，最简单的数据结构数组，数组节点的属性只有一个就是数据本身。我们可以认为数组就是数据在计算机存储空间内的简单排列，也正是因为这样数组有个显著的优点就是随机存储，可以根据数据元素的地址直接存取数据。简单的结构同时也给我们带来了一些复杂操作上的不便，当我们需要保证数据元素是密集的时候，往两个元素中插入元素或者删除一个中间的元素就需要我们去做一些额外的工作。</p>
+<h3 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h3><p>链表的节点需要在数组的基础上加上一个next元素用来存储下一个元素的地址，因为链表的数据在磁盘上不要求是连续的所以只要更改next节点的指向就可以轻易完成插入和删除操作。虽然链表解决了数据的某些问题，但是它没有具备数据随机存储的优点，如果你需要查找数据你必须从头结点一个一个遍历过来。</p>
+<h3 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h3><p>我想肯定不止我一个人想过能否把数组和链表的优点结合起来的问题。事实上，在JDK1.7及以前HashMap就是这样实现的。通过Hash算法并进行扰乱将元素均匀的分布在数据组上，如果出现Hash扰乱后的值相同就使用链表来存储数据。这样在合适的数据量的前提下，查询的操作大部分都由数据完成，而更新和删除操作大部分由数组完成。但是这仅仅是在数据量合适的情况下，如果数据量远远大于数组的长度，显然HashMap的查找效率会退化成链表的查询效率，并且我们不能一开始就把数组设置的非常大这样会消耗额外的空间。所以，HashMap如何去保证自身的效率？</p>
+<p>HashMap有一个初始的长度16，每当HashMap存储的元素超过阈值3/4时，HashMap就会进行一次容量扩大一倍的重构，想都不用想这个重构一定会很消耗资源。所以我们通常被建议在一开始就确定好HashMap的大小，你能想象一个需要在一开始确定数据量的数据库表么？如果mysql的表是这样的，我会选择换一个其他厂家的数据库。</p>
+<h3 id="二叉查找树"><a href="#二叉查找树" class="headerlink" title="二叉查找树"></a>二叉查找树</h3><p>我们给数组的节点加上了一个指针元素于是就有了链表，现在我们在给它加上另外一个指针元素于是就有了二叉树。而二叉查找树的父节点一定大于它的左孩子并且小于他的有孩子，虽然二叉树没有完全解决链表的查找问题，但是在二叉树的左右子树比较均衡的情况下我们至少将它的效率提升到了log2/N。那么问题又来了，我们怎么保证二叉树的平衡？显然像下图这个情况，二叉查找树又会退化成链表。</p>
+<p><img src="https://ae01.alicdn.com/kf/H3992008035604ee3b710ee0804834f2cf.png" width="400" hegiht="200" align="center"></p>
+<h3 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h3><p>红黑树是二叉平衡树的一种，二叉平衡树就是我们上面说的那种左右子树比较平衡的二叉树，也就是每个非叶子节点的左右子树相差不大于一的二叉树。红黑树具有以下四个性质</p>
+<ul>
+<li>节点是红色或黑色</li>
+<li>根节点是黑色</li>
+<li>每个红色节点的两个子节点都是黑色(从每个叶子到根的所有路径上不能有两个连续的红色节点)</li>
+<li>从任一节点到其每个叶子的所有路径都包含相同数目的黑色节点</li>
+</ul>
+<p><img src="https://ae01.alicdn.com/kf/Ha15df6633cea4b8c9d0243507287cc289.png" width="600" hegiht="313" align="center"></p>
+<p>性质的描述可能很简单，但是实现一个红黑树是特别复杂的，也正是因为红黑树的复杂性保证了每个节点到叶子节点的最小距离不能小于最大距离的一半，这样就能保证红黑树的查找效率一直接近log2/N。</p>
+<p>尽管红黑树在节点的增删改查上都给我们提供了不错的性能，但是实际上为了保证红黑树的特性，我们在新增和删除节点时还是需要做一些转换工作不过相对于数组要移动大部分的元素来说，红黑树似乎已经将优化做到了不错的程度。那么红黑树是否就是我们要寻找的数据结构？</p>
+<p>假设现在我们就用红黑树来作为我们的索引结构，假设我们的表有1万条数据，满二叉树的节点数是2^n-1，现在这棵树的高度是14，这也就意味着我们可能要做14次磁盘IO才能查找到我们想要的数据。显然，树的高度影响了查找的效率。</p>
+<h3 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h3><p>还是遵循着查找树左大右小的原则，我们想在一次磁盘I/O多进行几次元素的比较，我们给二叉查找树每个节点中间多加几个元素并且在每两个元素中间加一个指针，这就是B树。B树定义如下</p>
+<ul>
+<li><p>根结点至少有两个子女</p>
+</li>
+<li><p>每个非根节点所包含的关键字个数 j 满足：m/2 - 1 &lt;= j &lt;= m - 1；</p>
+</li>
+<li><p>除根结点以外的所有结点（不包括叶子结点）的度数正好是关键字总数加1，故内部子树个数 k 满足：m/2 &lt;= k &lt;= m </p>
+</li>
+<li><p>所有的叶子结点都位于同一层。</p>
+</li>
+</ul>
+<p><img src="https://ae01.alicdn.com/kf/H59982f931dcb4ca8afc1919474fb74856.png" width="400" hegiht="313" align="center"></p>
+<p>即使按从小到大的排序输入数据，B树依然能保持着良好的查询的结构，并且B树还通过设置一个节点元素的数量来保证搜索树的高度在一个可控范围内。相对于以上几种数据结构而言，B树显然更适合作为数据库的存储结构。</p>
+<h3 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a>B+树</h3><p>B+树在B树的结构上做了一些修改，B+树的数据都存储在叶子节点上，因此叶子节点的数量和数据的数量相同，并且每个叶子节点都包含一个指向下一个叶子节点的指针。</p>
+<p><img src="https://ae01.alicdn.com/kf/Hc9b87ca8acbd4848a54b2235a9415249y.png" width="600" hegiht="313" align="center"></p>
+<p>数据都处在同一层的结构方便了我们根据大于或者小于条件进行查找。</p>
+<h2 id="规范"><a href="#规范" class="headerlink" title="规范"></a>规范</h2><p>在了解数据库索引的数据结构的基础上，让我们来看看数据索引的规范。</p>
+<ul>
+<li>业务上具有唯一特性的字段，即使是多个字段的组合，也必须建成唯一索引</li>
+<li>超过三个表禁止 join。需要 join 的字段，数据类型必须绝对一致;多表关联查询时， 保证被关联的字段需要有索引</li>
+<li>在 varchar 字段上建立索引时，必须指定索引长度，没必要对全字段建立索引，根据实际文本区分度决定索引长度即可</li>
+<li>页面搜索严禁左模糊或者全模糊，如果需要请走搜索引擎来解决</li>
+</ul>
+<p>前两条说明了在单表和多表查询上索引是必要的，后两条表明索引具有B树的左前缀匹配特性。</p>
+<ul>
+<li>如果有 order by 的场景，请注意利用索引的有序性。order by 最后的字段是组合索引的一部分，并且放在索引组合顺序的最后，避免出现 file_sort 的情况，影响查询性能。</li>
+</ul>
+<p>联合索引的有序性，查询的顺序必须和定义的顺序相同，索引才会生效。另外，在联合索引的查询当中，如果出现大于或小于的条件，例如</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WHERE a &gt; 10 ORDER BY b</span><br></pre></td></tr></table></figure>
+<p>那么，索引a_b就无法生效。</p>
+<ul>
+<li>利用覆盖索引来进行查询操作，避免回表</li>
+</ul>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-08-20T09:25:13.387Z" itemprop="dateUpdated">2019-08-20 17:25:13</time>
+</span><br>
+
+
+        
+    </div>
+    
+    <footer>
+        <a href="https://blog.wweiwei.me">
+            <img src="/img/avatar.jpg" alt="魏巍">
+            魏巍
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/数据结构/">数据结构</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/7797fb59/&title=《数据库索引与规范》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/7797fb59/&title=《数据库索引与规范》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/7797fb59/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《数据库索引与规范》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/7797fb59/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/7797fb59/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/c2d38e6e/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">JVM内存模型</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/3e0c57de/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">MQ重复消费</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="bottom">
+        <p><span> &copy; 2019 Wei Wei. All rights reserved.</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/7797fb59/&title=《数据库索引与规范》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/7797fb59/&title=《数据库索引与规范》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/7797fb59/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《数据库索引与规范》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/7797fb59/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/7797fb59/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://blog.wweiwei.me/posts/7797fb59/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '正在加载';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '加载好了';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

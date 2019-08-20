@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Flink Join实例分析 | 魏巍的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Flink">
+    <meta name="description" content="之前学习了Flink转换函数，光看文档对有些函数的理解还是有些模糊。今天用一个实例来分析一下最常用的双流join操作，通过相同key的关联，将两个流合并成一个数据流。首先要做一些准备工作，比如了解一下Watermark,有珠玉在前我也不再赘述。这个例子尽可能地完整，尽可能地模拟出生产过程中的双流Join操作。测试数据123456User (id name)1,&amp;quot;lokey&amp;quot;2,">
+<meta name="keywords" content="Flink">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flink Join实例分析">
+<meta property="og:url" content="https://blog.wweiwei.me/posts/7dc02e3a/index.html">
+<meta property="og:site_name" content="魏巍的博客">
+<meta property="og:description" content="之前学习了Flink转换函数，光看文档对有些函数的理解还是有些模糊。今天用一个实例来分析一下最常用的双流join操作，通过相同key的关联，将两个流合并成一个数据流。首先要做一些准备工作，比如了解一下Watermark,有珠玉在前我也不再赘述。这个例子尽可能地完整，尽可能地模拟出生产过程中的双流Join操作。测试数据123456User (id name)1,&amp;quot;lokey&amp;quot;2,">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-07-11T08:23:25.875Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flink Join实例分析">
+<meta name="twitter:description" content="之前学习了Flink转换函数，光看文档对有些函数的理解还是有些模糊。今天用一个实例来分析一下最常用的双流join操作，通过相同key的关联，将两个流合并成一个数据流。首先要做一些准备工作，比如了解一下Watermark,有珠玉在前我也不再赘述。这个例子尽可能地完整，尽可能地模拟出生产过程中的双流Join操作。测试数据123456User (id name)1,&amp;quot;lokey&amp;quot;2,">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">魏巍</h5>
+          <a href="mailto:weiwei@njbandou.com" title="weiwei@njbandou.com" class="mail">weiwei@njbandou.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/lokeywei" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Flink Join实例分析</div>
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Flink Join实例分析</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-22T04:11:30.000Z" itemprop="datePublished" class="page-time">
+  2019-03-22
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/大数据/">大数据</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Java类"><span class="post-toc-number">1.</span> <span class="post-toc-text">Java类</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#User"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">User</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#UserInfo"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">UserInfo</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Flink数据源"><span class="post-toc-number">2.</span> <span class="post-toc-text">Flink数据源</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#UserStreamDataSource"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">UserStreamDataSource</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#UserInfoStreamDataSource"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">UserInfoStreamDataSource</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Flink-join转换"><span class="post-toc-number">3.</span> <span class="post-toc-text">Flink join转换</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#分析与总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">分析与总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Flink转换函数Join实例分析" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Flink Join实例分析</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-22 12:11:30" datetime="2019-03-22T04:11:30.000Z" itemprop="datePublished">2019-03-22</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/大数据/">大数据</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>之前学习了Flink转换函数，光看文档对有些函数的理解还是有些模糊。今天用一个实例来分析一下最常用的双流join操作，通过相同key的关联，将两个流合并成一个数据流。首先要做一些准备工作，比如了解一下<a href="http://wuchong.me/blog/2018/11/18/flink-tips-watermarks-in-apache-flink-made-easy/" target="_blank" rel="noopener">Watermark</a>,有珠玉在前我也不再赘述。这个例子尽可能地完整，尽可能地模拟出生产过程中的双流Join操作。<br>测试数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">User (id name)</span><br><span class="line">1,&quot;lokey&quot;</span><br><span class="line">2,&quot;weiwei&quot;</span><br><span class="line">UserInfo(id userId address)</span><br><span class="line">1,1,&quot;南京&quot;</span><br><span class="line">2,2,&quot;北京&quot;</span><br></pre></td></tr></table></figure></p>
+<p>以下转换等价于SQL语句<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT u.id,u.name,ui.address FROM t_user as u INNER JOIN t_user_info as ui WHERE u.id = ui.user_id</span><br></pre></td></tr></table></figure></p>
+<h2 id="Java类"><a href="#Java类" class="headerlink" title="Java类"></a>Java类</h2><h3 id="User"><a href="#User" class="headerlink" title="User"></a>User</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">public class User &#123;</span><br><span class="line">    private Integer id;</span><br><span class="line"></span><br><span class="line">    private String name;</span><br><span class="line"></span><br><span class="line">    private Long createTime;</span><br><span class="line"></span><br><span class="line">    public User(Integer id, String name, Long createTime) &#123;</span><br><span class="line">        this.id = id;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.createTime = createTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Long getCreateTime() &#123;</span><br><span class="line">        return createTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setCreateTime(Long createTime) &#123;</span><br><span class="line">        this.createTime = createTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public User() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public User(Integer id, String name) &#123;</span><br><span class="line">        this.id = id;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Integer getId() &#123;</span><br><span class="line">        return id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setId(Integer id) &#123;</span><br><span class="line">        this.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getName() &#123;</span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setName(String name) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return &quot;User&#123;&quot; +</span><br><span class="line">                &quot;id=&quot; + id +</span><br><span class="line">                &quot;, name=&apos;&quot; + name + &apos;\&apos;&apos; +</span><br><span class="line">                &apos;&#125;&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="UserInfo"><a href="#UserInfo" class="headerlink" title="UserInfo"></a>UserInfo</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">public class UserInfo &#123;</span><br><span class="line"></span><br><span class="line">    private Integer id;</span><br><span class="line"></span><br><span class="line">    private Integer userId;</span><br><span class="line"></span><br><span class="line">    private String address;</span><br><span class="line"></span><br><span class="line">    private Long createTime;</span><br><span class="line"></span><br><span class="line">    public Long getCreateTime() &#123;</span><br><span class="line">        return createTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setCreateTime(Long createTime) &#123;</span><br><span class="line">        this.createTime = createTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public UserInfo(Integer id, Integer userId, String address, Long createTime) &#123;</span><br><span class="line">        this.id = id;</span><br><span class="line">        this.userId = userId;</span><br><span class="line">        this.address = address;</span><br><span class="line">        this.createTime = createTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public UserInfo() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public UserInfo(Integer id, Integer userId, String address) &#123;</span><br><span class="line">        this.id = id;</span><br><span class="line">        this.userId = userId;</span><br><span class="line">        this.address = address;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Integer getId() &#123;</span><br><span class="line">        return id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setId(Integer id) &#123;</span><br><span class="line">        this.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Integer getUserId() &#123;</span><br><span class="line">        return userId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setUserId(Integer userId) &#123;</span><br><span class="line">        this.userId = userId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getAddress() &#123;</span><br><span class="line">        return address;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAddress(String address) &#123;</span><br><span class="line">        this.address = address;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Flink数据源"><a href="#Flink数据源" class="headerlink" title="Flink数据源"></a>Flink数据源</h2><h3 id="UserStreamDataSource"><a href="#UserStreamDataSource" class="headerlink" title="UserStreamDataSource"></a>UserStreamDataSource</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">import com.njbandou.flink.demo.model.User;</span><br><span class="line">import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;</span><br><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line">public class UserStreamDataSource extends RichParallelSourceFunction&lt;User&gt; &#123;</span><br><span class="line">    private volatile boolean running = true;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void run(SourceContext&lt;User&gt; cxt) throws Exception &#123;</span><br><span class="line">        List&lt;User&gt; userList = new ArrayList&lt;&gt;();</span><br><span class="line">        userList.add(new User(1,&quot;lokey&quot;,new Long(2)));</span><br><span class="line">        userList.add(new User(2,&quot;weiwei&quot;,new Long(1)));</span><br><span class="line"></span><br><span class="line">        int count = 0;</span><br><span class="line"></span><br><span class="line">        while (running &amp;&amp; count &lt; userList.size()) &#123;</span><br><span class="line">            cxt.collect(userList.get(count));</span><br><span class="line">            count++;</span><br><span class="line">            Thread.sleep(1000);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void cancel() &#123;</span><br><span class="line">        running = false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="UserInfoStreamDataSource"><a href="#UserInfoStreamDataSource" class="headerlink" title="UserInfoStreamDataSource"></a>UserInfoStreamDataSource</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">import com.njbandou.flink.demo.model.UserInfo;</span><br><span class="line">import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;</span><br><span class="line"></span><br><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line">public class UserInfoStreamDataSource extends RichParallelSourceFunction&lt;UserInfo&gt; &#123;</span><br><span class="line">    private volatile boolean running = true;</span><br><span class="line">    @Override</span><br><span class="line">    public void run(SourceContext&lt;UserInfo&gt; cxt) throws Exception &#123;</span><br><span class="line">        List&lt;UserInfo&gt; userInfoList = new ArrayList&lt;&gt;();</span><br><span class="line">        userInfoList.add(new UserInfo(1,1,&quot;南京&quot;,new Long(2)));</span><br><span class="line">        userInfoList.add(new UserInfo(2,2,&quot;北京&quot;,new Long(3)));</span><br><span class="line"></span><br><span class="line">        int count = 0;</span><br><span class="line"></span><br><span class="line">        while (running &amp;&amp; count &lt; userInfoList.size()) &#123;</span><br><span class="line">            cxt.collect(userInfoList.get(count));</span><br><span class="line">            count++;</span><br><span class="line">            Thread.sleep(1000);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void cancel() &#123;</span><br><span class="line">        running = false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Flink-join转换"><a href="#Flink-join转换" class="headerlink" title="Flink join转换"></a>Flink join转换</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">import com.njbandou.flink.demo.model.User;</span><br><span class="line">import com.njbandou.flink.demo.model.UserInfo;</span><br><span class="line">import org.apache.flink.api.common.functions.JoinFunction;</span><br><span class="line">import org.apache.flink.api.java.tuple.Tuple3;</span><br><span class="line">import org.apache.flink.streaming.api.TimeCharacteristic;</span><br><span class="line">import org.apache.flink.streaming.api.datastream.DataStream;</span><br><span class="line">import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line">import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;</span><br><span class="line">import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;</span><br><span class="line">import org.apache.flink.streaming.api.windowing.time.Time;</span><br><span class="line"></span><br><span class="line">public class TumbingWindowInnerJoinDemo &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws Exception&#123;</span><br><span class="line">        int windowSize = 10;</span><br><span class="line">        long delay = 2100L;</span><br><span class="line">        //初始化环境</span><br><span class="line">        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">        //根据事件发生时间产生watermark</span><br><span class="line">        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);</span><br><span class="line">        //设置线程并发数为1 数据串行</span><br><span class="line">        env.setParallelism(1);</span><br><span class="line">        //设置数据源</span><br><span class="line">        DataStream&lt;User&gt; userSource = env</span><br><span class="line">                .addSource(new UserStreamDataSource())</span><br><span class="line">                .name(&quot;User Source&quot;)</span><br><span class="line">                //声明事件发生时间</span><br><span class="line">                .assignTimestampsAndWatermarks(</span><br><span class="line">                new BoundedOutOfOrdernessTimestampExtractor&lt;User&gt;(Time.milliseconds(delay)) &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    public long extractTimestamp(User user) &#123;</span><br><span class="line">                        return user.getCreateTime();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        DataStream&lt;UserInfo&gt; userInfoSource = env</span><br><span class="line">                .addSource(new UserInfoStreamDataSource())</span><br><span class="line">                .name(&quot;UserInfo Source&quot;)</span><br><span class="line">                .assignTimestampsAndWatermarks(</span><br><span class="line">                new BoundedOutOfOrdernessTimestampExtractor&lt;UserInfo&gt;(Time.milliseconds(delay)) &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    public long extractTimestamp(UserInfo userInfo) &#123;</span><br><span class="line">                        return userInfo.getCreateTime();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        //进行join操作</span><br><span class="line">        userSource.join(userInfoSource)</span><br><span class="line">                .where(user-&gt;user.getId())</span><br><span class="line">                .equalTo(userInfo-&gt;userInfo.getUserId())</span><br><span class="line">                .window(TumblingEventTimeWindows.of(Time.seconds(windowSize)))</span><br><span class="line">                .apply(new JoinFunction&lt;User, UserInfo, Tuple3&lt;Integer,String,String&gt;&gt;() &#123;</span><br><span class="line">                    @Override</span><br><span class="line">                    public Tuple3&lt;Integer,String,String&gt; join(User user, UserInfo userInfo) &#123;</span><br><span class="line">                        return new Tuple3&lt;&gt;(user.getId(), user.getName(),userInfo.getAddress());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;).print();</span><br><span class="line"></span><br><span class="line">        env.execute(&quot;Demo&quot;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(1,lokey,南京)</span><br><span class="line">(2,weiwei,北京)</span><br></pre></td></tr></table></figure></p>
+<h2 id="分析与总结"><a href="#分析与总结" class="headerlink" title="分析与总结"></a>分析与总结</h2><p>运行结果达到预期。<br>在学习Flink转换函数的过程中，遇到了很多问题、解决问题的方法只有一个，就是自己动手编写转换函数，当结果达到预期才能算是学习的第一步。另外多种不同维度的输入测试也是必不可少的。这里不同输入的代码我就不贴出来了，有兴趣的同学可以自己动手试试。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-11T08:23:25.875Z" itemprop="dateUpdated">2019-07-11 16:23:25</time>
+</span><br>
+
+
+        
+    </div>
+    
+    <footer>
+        <a href="https://blog.wweiwei.me">
+            <img src="/img/avatar.jpg" alt="魏巍">
+            魏巍
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/">Flink</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/7dc02e3a/&title=《Flink Join实例分析》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/7dc02e3a/&title=《Flink Join实例分析》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/7dc02e3a/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Flink Join实例分析》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/7dc02e3a/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/7dc02e3a/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/6331d382/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">数据库连接池</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/cf658703/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Flink转换函数</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="bottom">
+        <p><span> &copy; 2019 Wei Wei. All rights reserved.</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/7dc02e3a/&title=《Flink Join实例分析》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/7dc02e3a/&title=《Flink Join实例分析》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/7dc02e3a/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Flink Join实例分析》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/7dc02e3a/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/7dc02e3a/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://blog.wweiwei.me/posts/7dc02e3a/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '正在加载';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '加载好了';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

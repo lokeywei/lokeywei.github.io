@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>MQ重复消费 | 魏巍的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="MQ">
+    <meta name="description" content="昨晚大概9点半左右接到客户电话，我们部署在广州一个智能开柜系统出现柜门自动弹开的情况。该系统用了EMQ作为消息队列，QoS设置为1，cleanSession默认为true。通过查看日志，项目从6月12日开始没有重新发布过版本，error日志只有7月15号的，具体内容如下： 1234567891011121314151617182019-07-15 16:26:06.465 |-ERROR [MQT">
+<meta name="keywords" content="MQ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MQ重复消费">
+<meta property="og:url" content="https://blog.wweiwei.me/posts/3e0c57de/index.html">
+<meta property="og:site_name" content="魏巍的博客">
+<meta property="og:description" content="昨晚大概9点半左右接到客户电话，我们部署在广州一个智能开柜系统出现柜门自动弹开的情况。该系统用了EMQ作为消息队列，QoS设置为1，cleanSession默认为true。通过查看日志，项目从6月12日开始没有重新发布过版本，error日志只有7月15号的，具体内容如下： 1234567891011121314151617182019-07-15 16:26:06.465 |-ERROR [MQT">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-08-20T09:25:13.387Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MQ重复消费">
+<meta name="twitter:description" content="昨晚大概9点半左右接到客户电话，我们部署在广州一个智能开柜系统出现柜门自动弹开的情况。该系统用了EMQ作为消息队列，QoS设置为1，cleanSession默认为true。通过查看日志，项目从6月12日开始没有重新发布过版本，error日志只有7月15号的，具体内容如下： 1234567891011121314151617182019-07-15 16:26:06.465 |-ERROR [MQT">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">魏巍</h5>
+          <a href="mailto:weiwei@njbandou.com" title="weiwei@njbandou.com" class="mail">weiwei@njbandou.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/lokeywei" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">MQ重复消费</div>
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">MQ重复消费</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-07-16T01:26:47.000Z" itemprop="datePublished" class="page-time">
+  2019-07-16
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/bugfixed/">bugfixed</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#快速止血"><span class="post-toc-number">1.</span> <span class="post-toc-text">快速止血</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#问题分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">问题分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#cleanSession"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">cleanSession</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Qos"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">Qos</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#幂等性"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">幂等性</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#一些思考"><span class="post-toc-number">3.</span> <span class="post-toc-text">一些思考</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-MQ重复消费" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">MQ重复消费</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-07-16 09:26:47" datetime="2019-07-16T01:26:47.000Z" itemprop="datePublished">2019-07-16</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/bugfixed/">bugfixed</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>昨晚大概9点半左右接到客户电话，我们部署在广州一个智能开柜系统出现柜门自动弹开的情况。该系统用了EMQ作为消息队列，QoS设置为1，cleanSession默认为true。通过查看日志，项目从6月12日开始没有重新发布过版本，error日志只有7月15号的，具体内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">2019-07-15 16:26:06.465 |-ERROR [MQTT Ping: consumer001] org.eclipse.paho.client.mqttv3.internal.ClientState [210] -| consumer001: Timed out as no activity, keepAlive=2,000 lastOutboundActivity=1,563,179,164,465 lastInboundActivity=1,563,179,162,449 time=1,563,179,166,465 lastPing=1,563,179,164,465</span><br><span class="line">2019-07-15 16:26:06.481 |-ERROR [MQTT Ping: consumer001] org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter [327] -| Lost connection: 等待来自服务器的响应时超时; retrying...</span><br><span class="line">2019-07-15 16:27:00.849 |-ERROR [MQTT Ping: consumer001] org.eclipse.paho.client.mqttv3.internal.ClientState [210] -| consumer001: Timed out as no activity, keepAlive=2,000 lastOutboundActivity=1,563,179,218,848 lastInboundActivity=1,563,179,216,847 time=1,563,179,220,849 lastPing=1,563,179,218,848</span><br><span class="line">2019-07-15 16:27:00.864 |-ERROR [MQTT Ping: consumer001] org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter [327] -| Lost connection: 等待来自服务器的响应时超时; retrying...</span><br><span class="line">2019-07-15 16:28:11.085 |-ERROR [MQTT Ping: consumer001] org.eclipse.paho.client.mqttv3.internal.ClientState [210] -| consumer001: Timed out as no activity, keepAlive=2,000 lastOutboundActivity=1,563,179,289,085 lastInboundActivity=1,563,179,287,070 time=1,563,179,291,085 lastPing=1,563,179,289,085</span><br><span class="line">2019-07-15 16:28:11.085 |-ERROR [MQTT Ping: consumer001] org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter [327] -| Lost connection: 等待来自服务器的响应时超时; retrying...</span><br><span class="line">2019-07-15 16:40:46.787 |-ERROR [MQTT Ping: consumer001] org.eclipse.paho.client.mqttv3.internal.ClientState [210] -| consumer001: Timed out as no activity, keepAlive=2,000 lastOutboundActivity=1,563,180,044,772 lastInboundActivity=1,563,180,042,769 time=1,563,180,046,787 lastPing=1,563,180,044,772</span><br><span class="line">2019-07-15 16:40:46.787 |-ERROR [MQTT Ping: consumer001] org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter [327] -| Lost connection: 等待来自服务器的响应时超时; retrying...</span><br><span class="line">2019-07-15 16:41:00.975 |-ERROR [MQTT Ping: consumer001] org.eclipse.paho.client.mqttv3.internal.ClientState [210] -| consumer001: Timed out as no activity, keepAlive=2,000 lastOutboundActivity=1,563,180,058,975 lastInboundActivity=1,563,180,056,944 time=1,563,180,060,975 lastPing=1,563,180,058,975</span><br><span class="line">2019-07-15 16:41:00.975 |-ERROR [MQTT Ping: consumer001] org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter [327] -| Lost connection: 等待来自服务器的响应时超时; retrying...</span><br><span class="line">2019-07-15 16:41:15.013 |-ERROR [MQTT Ping: consumer001] org.eclipse.paho.client.mqttv3.internal.ClientState [210] -| consumer001: Timed out as no activity, keepAlive=2,000 lastOutboundActivity=1,563,180,073,013 lastInboundActivity=1,563,180,071,092 time=1,563,180,075,013 lastPing=1,563,180,073,013</span><br><span class="line">2019-07-15 16:41:15.013 |-ERROR [MQTT Ping: consumer001] org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter [327] -| Lost connection: 等待来自服务器的响应时超时; retrying...</span><br><span class="line">2019-07-15 16:41:53.147 |-ERROR [MQTT Ping: consumer001] org.eclipse.paho.client.mqttv3.internal.ClientState [210] -| consumer001: Timed out as no activity, keepAlive=2,000 lastOutboundActivity=1,563,180,111,147 lastInboundActivity=1,563,180,109,131 time=1,563,180,113,147 lastPing=1,563,180,111,147</span><br><span class="line">2019-07-15 16:41:53.147 |-ERROR [MQTT Ping: consumer001] org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter [327] -| Lost connection: 等待来自服务器的响应时超时; retrying...</span><br><span class="line">2019-07-15 16:42:33.245 |-ERROR [MQTT Ping: consumer001] org.eclipse.paho.client.mqttv3.internal.ClientState [210] -| consumer001: Timed out as no activity, keepAlive=2,000 lastOutboundActivity=1,563,180,151,245 lastInboundActivity=1,563,180,149,233 time=1,563,180,153,245 lastPing=1,563,180,151,245</span><br><span class="line">2019-07-15 16:42:33.245 |-ERROR [MQTT Ping: consumer001] org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter [327] -| Lost connection: 等待来自服务器的响应时超时; retrying...</span><br><span class="line">2019-07-15 16:42:53.394 |-ERROR [MQTT Ping: consumer001] org.eclipse.paho.client.mqttv3.internal.ClientState [210] -| consumer001: Timed out as no activity, keepAlive=2,000 lastOutboundActivity=1,563,180,171,378 lastInboundActivity=1,563,180,169,378 time=1,563,180,173,394 lastPing=1,563,180,171,378</span><br><span class="line">2019-07-15 16:42:53.410 |-ERROR [MQTT Ping: consumer001] org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter [327] -| Lost connection: 等待来自服务器的响应时超时; retrying...</span><br></pre></td></tr></table></figure>
+<h2 id="快速止血"><a href="#快速止血" class="headerlink" title="快速止血"></a>快速止血</h2><p>从日志上来看是网络的问题导致消息队列重启，造成了消息重复消费。这就说明如果消息队列断网或者重启会造成消息的重复消费，于是我们尝试重启消费服务，果然出现了重复消费的日志。我们立马在消费端加上消息过期逻辑，如果消息存活时间超过五分钟，则判定消息过期不可以被消费。重新打包测试，重启后无重复消费日志。</p>
+<p>修复时间线:</p>
+<ul>
+<li>Bug产生时间16点40</li>
+<li>由现场人员发现，反馈时间18点</li>
+<li>通知到开发21点40</li>
+<li>测试打包22点30</li>
+<li>更新版本24点</li>
+</ul>
+<p>整个处理过程用时7个半小时，发现问题通知到开发用了五个小时，测试打包时间时间50分钟。由于项目已经平稳运行20多天，并且期间未发布过版本，以及协同开发内网部署等问题，这个处理时间还算差强人意。</p>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>消息队列重复消费是一个老生常谈的问题了，正常的情况下消息队列自己有处理重复消费的机制，一般情况下每条消息都有唯一的id来避免重复的消费。</p>
+<h3 id="cleanSession"><a href="#cleanSession" class="headerlink" title="cleanSession"></a>cleanSession</h3><p>查看EMQ文档，一般情况下要设置MqttConnectOptions的cleanSession参数为true，这样我们重启服务时就不会产生消息队列重复消费的问题。查看类MqttConnectOptions的源码，这个属性默认为true。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">boolean</span> cleanSession = <span class="keyword">true</span>;</span><br></pre></td></tr></table></figure>
+<p>实际上当cleanSession设置为true在重启时仍然会出现消息重复消费的情况。那么到底应该如何处理消息队列重复消费的问题？</p>
+<h3 id="Qos"><a href="#Qos" class="headerlink" title="Qos"></a>Qos</h3><p>从文档上来看，设置参数Qos可以控制消息通信规则。</p>
+<ul>
+<li>当Qos为0时（at most once），通信基于TCP/IP协议，没有重发机制，消息到达一次或者到达不了。</li>
+<li>当Qos为1时（at least onece），消息被消费时客户端有返回PUBACK确认信息，如果消息没有送达，就会一直重新发送。在当前的等级容易出现消息被多次消费的情况。</li>
+<li>当Qos为2时（exactly once），消息在Publisher、Broker与Subscriber中间有多重确认机制，确保消息只被消费一次。</li>
+</ul>
+<p>因此Qos按照文档上来说应该设置为2，咱们项目中Qos设置为1，因此可能在网络波动或者在项目重启的时候出现重复消费的情况。</p>
+<h3 id="幂等性"><a href="#幂等性" class="headerlink" title="幂等性"></a>幂等性</h3><p>我们不应该仅仅依赖消息队列的机制，同时我们也要保证消息处理函数的幂等性。当同一次消息多次到达时，要能保证程序可以分辨出消息是不是第一次到达。根据文档中描述，消息实体中存在DUP属性会根据发送次数不断自增。或者根据时间戳，我们也能很容易判断出请求是否是第一次到达。</p>
+<h2 id="一些思考"><a href="#一些思考" class="headerlink" title="一些思考"></a>一些思考</h2><p>这个项目同时部署在广州和无锡两个场地，虽然平稳地运行一个月的时间，但在在网络波动的情况下，程序并没有保证健壮性，出现了比较严重的后果。如果开发测试的过程再规范一点，这个问题在开发测试的过程中就可以被发现并解决。</p>
+<p>为了保证接口的并发处理能力，我们在测试过程中，将Qos从低到高开始测试。当Qos为0时，出现了消息丢失的情况，当Qos为1时，未发现重复消费，重启时也未发生消息重新处理的情况。根据以往的经验，当Qos设置为1时，重启时控制台会打印出消息被消费的log，但是由于开发测试和现场测试都未出现这个情况所以就没有深究。</p>
+<p>然而结果告诉我们，你担心发生的事情在程序运行时一定会发生。</p>
+<p>另外，在测试过程中，我们只考虑高并发的情况，并未考虑到网络的极端情况，就实际的运行来看网络出现波动是一个正常的现象，这一点一定要引以为戒。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-08-20T09:25:13.387Z" itemprop="dateUpdated">2019-08-20 17:25:13</time>
+</span><br>
+
+
+        
+    </div>
+    
+    <footer>
+        <a href="https://blog.wweiwei.me">
+            <img src="/img/avatar.jpg" alt="魏巍">
+            魏巍
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MQ/">MQ</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/3e0c57de/&title=《MQ重复消费》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/3e0c57de/&title=《MQ重复消费》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/3e0c57de/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MQ重复消费》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/3e0c57de/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/3e0c57de/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/7797fb59/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">数据库索引与规范</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/f01f372a/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Java架构师学习路线</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="bottom">
+        <p><span> &copy; 2019 Wei Wei. All rights reserved.</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/3e0c57de/&title=《MQ重复消费》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/3e0c57de/&title=《MQ重复消费》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/3e0c57de/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MQ重复消费》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/3e0c57de/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/3e0c57de/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://blog.wweiwei.me/posts/3e0c57de/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '正在加载';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '加载好了';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>

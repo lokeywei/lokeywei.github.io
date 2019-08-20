@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Flink高可用部署 | 魏巍的博客</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Flink">
+    <meta name="description" content="官方文档永远是最好的学习途径。在Flink下载地址上面有这么一段话  An Apache Hadoop installation is not required to use Apache Flink. For users that use Flink without any Hadoop components, we recommend the release without bundled H">
+<meta name="keywords" content="Flink">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flink高可用部署">
+<meta property="og:url" content="https://blog.wweiwei.me/posts/348cf105/index.html">
+<meta property="og:site_name" content="魏巍的博客">
+<meta property="og:description" content="官方文档永远是最好的学习途径。在Flink下载地址上面有这么一段话  An Apache Hadoop installation is not required to use Apache Flink. For users that use Flink without any Hadoop components, we recommend the release without bundled H">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://ci.apache.org/projects/flink/flink-docs-release-1.7/fig/jobmanager_ha_overview.png">
+<meta property="og:image" content="https://0d077ef9e74d8.cdn.sohucs.com/rkzckJ7_png">
+<meta property="og:updated_time" content="2019-07-11T08:23:25.875Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flink高可用部署">
+<meta name="twitter:description" content="官方文档永远是最好的学习途径。在Flink下载地址上面有这么一段话  An Apache Hadoop installation is not required to use Apache Flink. For users that use Flink without any Hadoop components, we recommend the release without bundled H">
+<meta name="twitter:image" content="https://ci.apache.org/projects/flink/flink-docs-release-1.7/fig/jobmanager_ha_overview.png">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">魏巍</h5>
+          <a href="mailto:weiwei@njbandou.com" title="weiwei@njbandou.com" class="mail">weiwei@njbandou.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                文章
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/lokeywei" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Flink高可用部署</div>
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Flink高可用部署</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-12T06:30:30.000Z" itemprop="datePublished" class="page-time">
+  2019-03-12
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/大数据/">大数据</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Standalone模式下的HA"><span class="post-toc-number">1.</span> <span class="post-toc-text">Standalone模式下的HA</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Flink高可用部署" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Flink高可用部署</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-12 14:30:30" datetime="2019-03-12T06:30:30.000Z" itemprop="datePublished">2019-03-12</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/大数据/">大数据</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>官方文档永远是最好的学习途径。在Flink下载地址上面有这么一段话</p>
+<blockquote>
+<p>An Apache Hadoop installation is not required to use Apache Flink. For users that use Flink without any Hadoop components, we recommend the release without bundled Hadoop libraries.<br><br>If you plan to use Apache Flink together with Apache Hadoop (run Flink on YARN, connect to HDFS, connect to HBase, or use some Hadoop-based file system connector) then select the download that bundles the matching Hadoop version, or use the Hadoop free version and export your HADOOP_CLASSPATH.</p>
+</blockquote>
+<p>这段话说的就像绕口令一样，大概意思就是如果你想通过Flink使用Hadoop的一些功能请下载匹配你的Hadoop版本的安装包，否则就老老实实地选择纯净版的Flink。</p>
+<p>另外，文档明确的指出了Flink投入生产前必须要做的四件事。</p>
+<ul>
+<li>定义算子最大并发数</li>
+<li>为算子指定ID </li>
+<li>充分考虑后端状态</li>
+<li>配置高可用（HA）</li>
+</ul>
+<p><a href="[http://wuchong.me/blog/2018/12/03/flink-tips-4-steps-flink-application-production-ready/]">官方文档链接</a>和<a href="http://wuchong.me/blog/2018/12/03/flink-tips-4-steps-flink-application-production-ready/" target="_blank" rel="noopener">中文翻译链接</a>都在这里。<br>本篇文章主要讨论一下Flink集群的高可用部署。在网上搜索了半天，大部分博客上说的内容基本和官方文档大差不差，都是默认集群环境已经安装完毕直接就开始进行配置文件修改。这种约定俗成的默认对小白来说就有点致命了，所以下面的环境搭建介绍会详细介绍每一步操作，使用Flink版本为1.7.2。</p>
+<h2 id="Standalone模式下的HA"><a href="#Standalone模式下的HA" class="headerlink" title="Standalone模式下的HA"></a>Standalone模式下的HA</h2><p>Standalone是相对运行在Hadoop YARN下的运行模式，如果你只在一个JVM下运行Flink，只需要下载一个<a href="https://www.apache.org/dyn/closer.lua/flink/flink-1.7.2/flink-1.7.2-bin-scala_2.11.tgz" target="_blank" rel="noopener">flink-1.7.2-bin-scala_2.11.tgz</a><br><br>然后执行以下命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ tar -zxvf flink-1.7.2-bin-scala_2.11.tgz</span><br><span class="line">$ cd flink-1.7.2</span><br><span class="line">$ bin/start-cluster.sh</span><br><span class="line">Starting cluster.</span><br><span class="line">Starting standalonesession daemon on host iz8vb5p26lecwypfnsc77yz.</span><br><span class="line">Starting taskexecutor daemon on host iz8vb5p26lecwypfnsc77yz.</span><br></pre></td></tr></table></figure></p>
+<p>你就成功地启动了一个JobMananger（master）和一个TaskManager（slave）。</p>
+<ul>
+<li>JobManger负责任务调度以及checkpoint</li>
+<li>TaskManager负责具体执行</li>
+</ul>
+<p><strong>为什么我们要在投入生产之前做配置的HA？</strong><br><br>通常一个JobManger管理着多个TaskManger，如果TaskManger出现了异常，JobManager会在用户无法察觉的情况下通过checkpoint机制去做异常的恢复。但是如果JobManager出现了单点异常，那么当前处理的任务就会受到影响。</p>
+<p><strong>那么我们通过什么样的方式去做Standalone的HA？</strong><br><br>官方文档已经给出了解决的方案，就是同时启动多个JobManager一台处于Leader也就是在使用状态，其他的处于Standby备用状态。当Leader出现单点异常其中的一台热备会立马接替Leader的工作，然后出现单点异常的节点会开始Recover直到再次成为StandBy状态。实现上述操作需要借助ZooKeeper，Flink软件包已经为我们内置了一个Zookeeper，但在实际的生产环境中，官方文档建议我们自己维护zookeeper，由于我们必须将JobManger的恢复元数据保存在HDFS之中，所以一个Hadoop环境也是必须的。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ci.apache.org/projects/flink/flink-docs-release-1.7/fig/jobmanager_ha_overview.png" alt="avatr" title>
+                </div>
+                <div class="image-caption">avatr</div>
+            </figure>
+<center>图片来自官方文档</center>
+
+<p><strong>具体的操作</strong><br>进入conf文件夹,配置文件结构如下<br><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://0d077ef9e74d8.cdn.sohucs.com/rkzckJ7_png" alt title>
+                </div>
+                <div class="image-caption"></div>
+            </figure><br>1.配置master,添加JobManger主机 格式ip:host<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">localhost:8081</span><br><span class="line">localhost:8082 #实际上你无法在一台设备上启动两个JobManager</span><br></pre></td></tr></table></figure></p>
+<p>2.配置flink-conf.yaml<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">#必须设置</span><br><span class="line">high-availability: zookeeper</span><br><span class="line">high-availability.zookeeper.quorum: localhost:2181</span><br><span class="line">high-availability.storageDir: hdfs:///flink/recovery #这一条告诉我们你必须安装一个hadoop环境</span><br><span class="line">#推荐设置</span><br><span class="line">high-availability.zookeeper.path.root: /flink</span><br><span class="line">high-availability.cluster-id: /cluster_one # important: customize per cluster</span><br></pre></td></tr></table></figure></p>
+<p>3.修改zoo.cfg由于本次实验只运行一个ZooKeeper所以不作修改。<br>4.启动ZooKeeper<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ bin/start-zookeeper-quorum.sh</span><br><span class="line">Starting zookeeper daemon on host localhost.</span><br></pre></td></tr></table></figure></p>
+<p>5.启动Flink HA<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ bin/start-cluster.sh</span><br><span class="line">Starting HA cluster with 2 masters and 1 peers in ZooKeeper quorum.</span><br><span class="line">Starting jobmanager daemon on host localhost.</span><br><span class="line">Starting jobmanager daemon on host localhost. </span><br><span class="line">Starting taskmanager daemon on host localhost.</span><br></pre></td></tr></table></figure></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-11T08:23:25.875Z" itemprop="dateUpdated">2019-07-11 16:23:25</time>
+</span><br>
+
+
+        
+    </div>
+    
+    <footer>
+        <a href="https://blog.wweiwei.me">
+            <img src="/img/avatar.jpg" alt="魏巍">
+            魏巍
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Flink/">Flink</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/348cf105/&title=《Flink高可用部署》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/348cf105/&title=《Flink高可用部署》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/348cf105/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Flink高可用部署》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/348cf105/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/348cf105/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/278a9f7/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Kafka的概念以及使用</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/c015540e/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Flink初体验</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="bottom">
+        <p><span> &copy; 2019 Wei Wei. All rights reserved.</span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://blog.wweiwei.me/posts/348cf105/&title=《Flink高可用部署》 — 魏巍的博客&pic=https://blog.wweiwei.me/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://blog.wweiwei.me/posts/348cf105/&title=《Flink高可用部署》 — 魏巍的博客&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.wweiwei.me/posts/348cf105/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Flink高可用部署》 — 魏巍的博客&url=https://blog.wweiwei.me/posts/348cf105/&via=https://blog.wweiwei.me" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://blog.wweiwei.me/posts/348cf105/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://blog.wweiwei.me/posts/348cf105/" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+
+
+
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '正在加载';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '加载好了';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+
+</body>
+</html>
